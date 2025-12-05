@@ -527,22 +527,23 @@
       formError.classList.remove("hidden");
     }
 
-    async function syncToCloud(entry) {
-      try {
-        await fetch(
-          "https://script.google.com/macros/s/AKfycbxcT3ONv0mG70R5BZTc2qMncRNHP9lrCUVNkK5VfPVQAPU_F0zSRxJywP-XfIGp6DRn/exec",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(entry),
-          }
-        );
-      } catch (err) {
-        console.error("雲端同步失敗：", err);
-      }
-    }
+async function syncToCloud(entry) {
+  const data = encodeURIComponent(JSON.stringify(entry));
+  const proxyURL =
+    "https://script.google.com/macros/s/AKfycbxcT3ONv0mG70R5BZTc2qMncRNHP9lrCUVNkK5VfPVQAPU_F0zSRxJywP-XfIGp6DRn/exec#" +
+    data;
+
+  try {
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = proxyURL;
+    document.body.appendChild(iframe);
+
+    console.log("資料已透過 proxy 傳送！");
+  } catch (err) {
+    console.error("proxy error：", err);
+  }
+}
 
     /* =========================================
         過濾當月資料
