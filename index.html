@@ -138,15 +138,28 @@
       <form id="entryForm" class="mt-5 space-y-4 hidden slide">
         <div>
           <label class="text-xs">金額</label>
-<input
-  id="amountInput"
-  type="text"
-  inputmode="text"
-  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm"
-  placeholder="可直接輸入 100+50*2"
-/>
-        </div>
+<div id="calcPad" class="grid grid-cols-4 gap-2 mt-3 text-center text-sm select-none">
+  <button type="button" onclick="calcInput('7')">7</button>
+  <button type="button" onclick="calcInput('8')">8</button>
+  <button type="button" onclick="calcInput('9')">9</button>
+  <button type="button" onclick="calcBack()">←</button>
 
+  <button type="button" onclick="calcInput('4')">4</button>
+  <button type="button" onclick="calcInput('5')">5</button>
+  <button type="button" onclick="calcInput('6')">6</button>
+  <button type="button" onclick="calcInput('-')">－</button>
+
+  <button type="button" onclick="calcInput('1')">1</button>
+  <button type="button" onclick="calcInput('2')">2</button>
+  <button type="button" onclick="calcInput('3')">3</button>
+  <button type="button" onclick="calcInput('+')">＋</button>
+
+  <button type="button" onclick="calcClear()">C</button>
+  <button type="button" onclick="calcInput('0')">0</button>
+  <button type="button" onclick="calcInput('*')">×</button>
+  <button type="button" onclick="calcEqual()">＝</button>
+</div>
+ 
         <div>
           <label class="text-xs">日期</label>
           <input
@@ -563,7 +576,6 @@ entryForm.onsubmit = async (e) => {
   e.preventDefault();
 
   formError.classList.add("hidden");
-if (!calculateAmountIfNeeded()) return;
 const amount = Number(amountInput.value);
   const date = dateInput.value;
   const note = noteInput.value.trim();
@@ -924,22 +936,29 @@ mobileList.querySelectorAll("button[data-id]").forEach((btn) => {
     /* 初始化 */
     init();
 
-function calculateAmountIfNeeded() {
-  const raw = amountInput.value.trim();
 
-  // 如果有含 + - * /
-  if (/[+\-*/]/.test(raw)) {
-    try {
-      const result = Function(`return (${raw})`)();
-      if (!isNaN(result)) {
-        amountInput.value = Math.round(result);
-      }
-    } catch (err) {
-      showError("計算式有誤，請確認格式");
-      return false;
+function calcInput(val) {
+  amountInput.value += val;
+}
+
+function calcClear() {
+  amountInput.value = "";
+}
+
+function calcBack() {
+  amountInput.value = amountInput.value.slice(0, -1);
+}
+
+function calcEqual() {
+  try {
+    const expr = amountInput.value.replace(/×/g, "*");
+    const result = Function(`return (${expr})`)();
+    if (!isNaN(result)) {
+      amountInput.value = Math.round(result);
     }
+  } catch (e) {
+    showError("計算錯誤，請重新輸入");
   }
-  return true;
 }
 
   </script>
