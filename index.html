@@ -294,46 +294,102 @@ function showError(msg) {
   formError.classList.remove("hidden");
 }
 
+// ⚠️ 替換這裡！請使用您在步驟三中部署 Web App 後的「已部署網址」
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec'; 
 
-async function sendDataToSheet(formData) {
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(formData),
-      redirect: 'follow'
-    });
+/**
+ * 處理新增或刪除請求
+ * @param {object} data - 包含資料和 action (如果是刪除，action='DELETE') 的物件
+ */
+async function sendActionToSheet(data) {
+    const isDelete = data.action === 'DELETE';
+    const actionName = isDelete ? '刪除' : '新增';
+    
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(data),
+            redirect: 'follow'
+        });
 
-    const result = await response.json();
+        const result = await response.json();
 
-    if (result.status === 'success') {
-      alert('記帳成功，已同步到 Google Sheet ✅');
-    } else {
-      alert('同步失敗：' + result.message);
+        if (result.status === 'success') {
+            console.log(`✅ 資料${actionName}成功:`, result.message);
+            // 不跳出成功提醒
+            return true;
+        } else {
+            console.error(`❌ 資料${actionName}失敗:`, result.message);
+            alert(`${actionName}失敗：${result.message}`); // 建議保留失敗提醒
+            return false;
+        }
+
+    } catch (err) {
+        console.error(`❌ ${actionName}時發生錯誤:`, err);
+        alert(`${actionName}發生錯誤，請檢查網路或後台`);
+        return false;
     }
-
-  } catch (err) {
-    alert('同步發生錯誤，請檢查網路或後台');
-  }
 }
 
-    /* =========================================
-        初始化
-    ========================================= */
-    function init() {
-      const t = new Date();
-      const yyyy = t.getFullYear();
-      const mm = String(t.getMonth() + 1).padStart(2, "0");
-      const dd = String(t.getDate()).padStart(2, "0");
-      dateInput.value = `${yyyy}-${mm}-${dd}`;
-      monthFilter.value = `${yyyy}-${mm}`;
+/**
+ * 從 Google Sheet (doGet) 讀取所有資料並更新本地
+ */
+async function loadDataFromSheet() {
+    console.log('🔄 嘗試從雲端同步資料...');
+    try {
+        const response = await fetch(SCRIPT_URL, { 
+            method: 'GET' 
+        });
 
-      loadEntries();
-      loadCategoryBudgets();
-      renderBudgetInputs();
-      render();
+        const result = await response.json();
+
+        if (result.status === 'success' && Array.isArray(result.data)) {
+            // 用雲端最新的資料覆蓋本地儲存
+            entries = result.data.map(e => ({
+                ...e,
+                // 確保金額是數字
+                amount: parseFloat(e.amount),
+                // 確保 ID 是字串
+                id: String(e.id)
+            }));
+            
+            saveEntries(); // 儲存最新的雲端資料到本地
+            console.log(`✅ 雲端同步完成！共載入 ${entries.length} 筆紀錄。`);
+            return true;
+        } else {
+            console.error('❌ 雲端資料讀取失敗:', result.message);
+            // 讀取失敗時，程式仍繼續使用本地資料 (entries 陣列)
+            return false;
+        }
+    } catch (err) {
+        console.error('❌ 雲端連線錯誤 (GET):', err);
+        return false;
     }
+}
+
+/* =========================================
+    初始化
+========================================= */
+async function init() { // ⚠️ 必須將 function init() 改為 async function init()
+  const t = new Date();
+  const yyyy = t.getFullYear();
+  const mm = String(t.getMonth() + 1).padStart(2, "0");
+  const dd = String(t.getDate()).padStart(2, "0");
+  dateInput.value = `${yyyy}-${mm}-${dd}`;
+  monthFilter.value = `${yyyy}-${mm}`;
+
+  // 先從雲端載入最新的資料 (會覆蓋本地儲存)
+  await loadDataFromSheet(); 
+  
+  // loadEntries(); // 這一行現在可註解掉或移除，因為 loadDataFromSheet 已包含此邏輯
+  loadCategoryBudgets();
+  renderBudgetInputs();
+  render();
+}
+
+// 確保腳本最下方的 init() 仍被呼叫
+// init();
 
     /* =========================================
         LocalStorage
@@ -545,8 +601,8 @@ entryForm.onsubmit = async (e) => {
   saveEntries();
 
   // 1. 等待雲端同步結果
-  const success = await sendDataToSheet(entry); 
-
+const success = await sendActionToSheet(entry);
+ 
   // 2. 只有在雲端同步成功後才清空表單和更新畫面
   if (success) {
     amountInput.value = "";
@@ -723,14 +779,29 @@ async function handleFormSubmit(event) {
         mobileList.appendChild(card);
       });
 
-      mobileList.querySelectorAll("button[data-id]").forEach((btn) => {
-        btn.onclick = () => {
-          entries = entries.filter((e) => e.id !== btn.dataset.id);
-          saveEntries();
-          render();
-        };
-      });
-    }
+mobileList.querySelectorAll("button[data-id]").forEach((btn) => {
+    btn.onclick = async () => { // ⚠️ 必須將 onclick 函式改為 async
+        const entryId = btn.dataset.id;
+
+        if (!confirm(`確定要刪除這筆 ID: ${entryId} 的紀錄嗎？雲端也會同步刪除。`)) {
+            return;
+        }
+
+        // 1. 呼叫雲端 API 刪除資料
+        const deletePayload = { action: 'DELETE', id: entryId };
+        const success = await sendActionToSheet(deletePayload);
+
+        if (success) {
+            // 2. 雲端成功刪除後，才更新本地資料
+            entries = entries.filter((e) => e.id !== entryId);
+            saveEntries();
+            render();
+            alert("刪除成功，雲端與本地已同步！");
+        } else {
+            alert("雲端刪除失敗，本地紀錄仍保留。");
+        }
+    };
+});
 
     /* =========================================
         預算 UI
