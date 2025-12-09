@@ -289,6 +289,35 @@
     let categoryBudgets = {};
     let pieChart = null;
 
+function showError(msg) {
+  formError.textContent = msg;
+  formError.classList.remove("hidden");
+}
+
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec'; 
+
+async function sendDataToSheet(formData) {
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(formData),
+      redirect: 'follow'
+    });
+
+    const result = await response.json();
+
+    if (result.status === 'success') {
+      alert('記帳成功，已同步到 Google Sheet ✅');
+    } else {
+      alert('同步失敗：' + result.message);
+    }
+
+  } catch (err) {
+    alert('同步發生錯誤，請檢查網路或後台');
+  }
+}
+
     /* =========================================
         初始化
     ========================================= */
@@ -514,55 +543,7 @@
       entries.push(entry);
       saveEntries();
 sendDataToSheet(entry); 
-
-  // 【替換這裡】請將這裡的字串替換成您在步驟三中複製的「已部署網址」
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec'; 
-
-/**
- * 這是將資料發送到 Google Apps Script Web App 的函式
- * @param {object} formData - 包含帳目細節的物件
- */
-async function sendDataToSheet(formData) {
-    console.log('準備同步資料:', formData);
-
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            // 【解決 CORS 錯誤的關鍵！】設置 Content-Type 為 text/plain
-            // 這樣可以避免瀏覽器發送預檢 (OPTIONS) 請求，從而避免 CORS 錯誤。
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8', 
-            },
-            // 將資料物件轉換為 JSON 字串放入 body
-            body: JSON.stringify(formData),
-            // 讓瀏覽器自動跟隨 Apps Script 的重新導向
-            redirect: 'follow', 
-        });
-
-        // 檢查 HTTP 狀態碼
-        if (!response.ok) {
-            throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
-        }
-        
-        // 解析 Apps Script 回傳的 JSON 資料
-        const result = await response.json(); 
-
-        if (result.status === 'success') {
-            console.log('✅ 資料同步成功:', result.message);
-            alert('記帳成功，資料已同步到 Google Sheet！');
-            return true;
-        } else {
-            console.error('❌ 資料同步失敗 (Apps Script 錯誤):', result.message);
-            alert(`同步失敗: ${result.message}`);
-            return false;
-        }
-
-    } catch (error) {
-        console.error('❌ 網路或 CORS 錯誤:', error);
-        alert('資料同步到雲端時發生錯誤，請檢查網路或 Apps Script 部署狀態。');
-        return false;
-    }
-}
+render();
 
 // ----------------------------------------------------
 // 範例：如何呼叫這個函式 (您需要將此邏輯嵌入到您的表單提交事件中)
