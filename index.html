@@ -561,6 +561,11 @@ async function init() { // ⚠️ 必須將 function init() 改為 async functio
       highlightType("income");
     };
 
+ setTimeout(() => {
+    amountInput.focus();   // 
+  }, 100);
+};
+
     btnExpense.onclick = () => {
       entryForm.classList.remove("hidden");
       expenseCategoryBlock.classList.remove("hidden");
@@ -570,6 +575,11 @@ async function init() { // ⚠️ 必須將 function init() 改為 async functio
       highlightType("expense");
     };
 
+  setTimeout(() => {
+    amountInput.focus();   // 
+  }, 100);
+};
+
     btnSaving.onclick = () => {
       entryForm.classList.remove("hidden");
       expenseCategoryBlock.classList.add("hidden");
@@ -577,6 +587,12 @@ async function init() { // ⚠️ 必須將 function init() 改為 async functio
       selectedSubCategory = null;
       highlightType("saving");
     };
+
+  setTimeout(() => {
+    amountInput.focus();   // 
+  }, 100);
+};
+
 
 /* =========================================
     新增紀錄
