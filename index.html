@@ -500,50 +500,60 @@ async function sendDataToSheet(formData) {
       highlightType("saving");
     };
 
-    /* =========================================
-        新增紀錄
-    ========================================= */
-    entryForm.onsubmit = (e) => {
-      e.preventDefault();
+/* =========================================
+    新增紀錄
+========================================= */
+// 這裡必須是 async 才能使用 await sendDataToSheet
+entryForm.onsubmit = async (e) => { 
+  e.preventDefault();
 
-      formError.classList.add("hidden");
-      const amount = Number(amountInput.value);
-      const date = dateInput.value;
-      const note = noteInput.value.trim();
+  formError.classList.add("hidden");
+  const amount = Number(amountInput.value);
+  const date = dateInput.value;
+  const note = noteInput.value.trim();
 
-      if (!selectedType)
-        return showError("請先選擇 收入 / 支出 / 儲蓄 類型。");
+  if (!selectedType)
+    return showError("請先選擇 收入 / 支出 / 儲蓄 類型。");
 
-      if (amount <= 0 || !date)
-        return showError("請確認金額與日期都有填寫，金額需大於 0。");
+  if (amount <= 0 || !date)
+    return showError("請確認金額與日期都有填寫，金額需大於 0。");
 
-      let mainCat = null;
-      let subCat = null;
+  let mainCat = null;
+  let subCat = null;
 
-      if (selectedType === "expense") {
-        if (!selectedMainCategory || !selectedSubCategory)
-          return showError("支出請選擇主要分類與子分類。");
-        mainCat = selectedMainCategory;
-        subCat = selectedSubCategory;
-      }
+  if (selectedType === "expense") {
+    if (!selectedMainCategory || !selectedSubCategory)
+      return showError("支出請選擇主要分類與子分類。");
+    mainCat = selectedMainCategory;
+    subCat = selectedSubCategory;
+  }
 
-      const id = Date.now().toString();
+  const id = Date.now().toString();
 
-      const entry = {
-        id,
-        type: selectedType,
-        amount,
-        date,
-        note,
-        mainCategory: mainCat,
-        subCategory: subCat,
-        createdAt: new Date().toISOString(),
-      };
+  const entry = {
+    id,
+    type: selectedType,
+    amount,
+    date,
+    note,
+    mainCategory: mainCat,
+    subCategory: subCat,
+    createdAt: new Date().toISOString(),
+  };
 
-      entries.push(entry);
-      saveEntries();
-sendDataToSheet(entry); 
-render();
+  entries.push(entry);
+  saveEntries();
+
+  // 1. 等待雲端同步結果
+  const success = await sendDataToSheet(entry); 
+
+  // 2. 只有在雲端同步成功後才清空表單和更新畫面
+  if (success) {
+    amountInput.value = "";
+    noteInput.value = "";
+    render(); // 更新本地畫面
+  }
+}; 
 
 // ----------------------------------------------------
 // 範例：如何呼叫這個函式 (您需要將此邏輯嵌入到您的表單提交事件中)
