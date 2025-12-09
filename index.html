@@ -142,34 +142,12 @@
 <input
   id="amountInput"
   type="number"
-  inputmode="numeric"
-  class="w-full mt-1 px-3 py-2 rounded-xl border border-slate-300 text-sm"
+  inputmode="numeric" 
+  pattern="[0-9]*"
+  class="w-full mt-2 mb-2 px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white"
   placeholder="請輸入金額"
 />
 
-
-<div id="calcPad" class="grid grid-cols-4 gap-2 mt-3 text-center text-sm select-none">
-  <button type="button" onclick="calcInput('7')">7</button>
-  <button type="button" onclick="calcInput('8')">8</button>
-  <button type="button" onclick="calcInput('9')">9</button>
-  <button type="button" onclick="calcBack()">←</button>
-
-  <button type="button" onclick="calcInput('4')">4</button>
-  <button type="button" onclick="calcInput('5')">5</button>
-  <button type="button" onclick="calcInput('6')">6</button>
-  <button type="button" onclick="calcInput('-')">－</button>
-
-  <button type="button" onclick="calcInput('1')">1</button>
-  <button type="button" onclick="calcInput('2')">2</button>
-  <button type="button" onclick="calcInput('3')">3</button>
-  <button type="button" onclick="calcInput('+')">＋</button>
-
-  <button type="button" onclick="calcClear()">C</button>
-  <button type="button" onclick="calcInput('0')">0</button>
-  <button type="button" onclick="calcInput('*')">×</button>
-  <button type="button" onclick="calcEqual()">＝</button>
-</div>
- 
         <div>
           <label class="text-xs">日期</label>
           <input
@@ -553,45 +531,34 @@ async function init() { // ⚠️ 必須將 function init() 改為 async functio
       selectedType = type;
     }
 
-    btnIncome.onclick = () => {
-      entryForm.classList.remove("hidden");
-      expenseCategoryBlock.classList.add("hidden");
-      selectedMainCategory = null;
-      selectedSubCategory = null;
-      highlightType("income");
-    };
-
- setTimeout(() => {
-    amountInput.focus();   // 
-  }, 100);
+btnIncome.onclick = () => {
+  entryForm.classList.remove("hidden");
+  expenseCategoryBlock.classList.add("hidden");
+  selectedMainCategory = null;
+  selectedSubCategory = null;
+  highlightType("income");
 };
 
-    btnExpense.onclick = () => {
-      entryForm.classList.remove("hidden");
-      expenseCategoryBlock.classList.remove("hidden");
-      selectedMainCategory = null;
-      selectedSubCategory = null;
-      renderMainCategories();
-      highlightType("expense");
-    };
+btnExpense.onclick = () => {
+  entryForm.classList.remove("hidden");
+  expenseCategoryBlock.classList.remove("hidden");
+  selectedMainCategory = null;
+  selectedSubCategory = null;
+  renderMainCategories();
+  highlightType("expense");
+};
+
+btnSaving.onclick = () => {
+  entryForm.classList.remove("hidden");
+  expenseCategoryBlock.classList.add("hidden");
+  selectedMainCategory = null;
+  selectedSubCategory = null;
+  highlightType("saving");
+};
 
   setTimeout(() => {
     amountInput.focus();   // 
   }, 100);
-};
-
-    btnSaving.onclick = () => {
-      entryForm.classList.remove("hidden");
-      expenseCategoryBlock.classList.add("hidden");
-      selectedMainCategory = null;
-      selectedSubCategory = null;
-      highlightType("saving");
-    };
-
-  setTimeout(() => {
-    amountInput.focus();   // 
-  }, 100);
-};
 
 
 /* =========================================
@@ -962,30 +929,6 @@ mobileList.querySelectorAll("button[data-id]").forEach((btn) => {
     /* 初始化 */
     init();
 
-
-function calcInput(val) {
-  amountInput.value += val;
-}
-
-function calcClear() {
-  amountInput.value = "";
-}
-
-function calcBack() {
-  amountInput.value = amountInput.value.slice(0, -1);
-}
-
-function calcEqual() {
-  try {
-    const expr = amountInput.value.replace(/×/g, "*");
-    const result = Function(`return (${expr})`)();
-    if (!isNaN(result)) {
-      amountInput.value = Math.round(result);
-    }
-  } catch (e) {
-    showError("計算錯誤，請重新輸入");
-  }
-}
 
   </script>
 </body>
