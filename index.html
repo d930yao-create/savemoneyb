@@ -24,11 +24,12 @@
             blush: "#FFB7CE",
             pastel: "#FFE3ED",
             ink: "#2b2b3c",
-            success: "#10B981", // 綠色
-            danger: "#EF4444",  // 紅色
+            success: "#10B981", 
+            danger: "#EF4444",  
           },
           boxShadow: {
             soft: "0 0 0 rgba(0,0,0,0)",
+            float: "0 8px 20px rgba(255, 108, 159, 0.3)",
           },
         },
       },
@@ -81,7 +82,7 @@
       max-width: 160px;
       box-shadow: 0 4px 10px rgba(255, 150, 186, 0.25);
     }
-    
+
     /* Checkbox 自訂樣式 */
     .custom-checkbox {
       accent-color: #FF6C9F;
@@ -91,81 +92,68 @@
     
     .bill-done {
       text-decoration: line-through;
-      color: #cbd5e1; /* slate-300 */
+      color: #cbd5e1;
     }
   </style>
 </head>
 
-<body class="min-h-screen bg-milk text-ink">
+<body class="min-h-screen bg-milk text-ink pb-20">
   <div class="max-w-xl mx-auto px-4 py-6 space-y-6">
 
-    <section class="bg-white rounded-2xl shadow-soft border border-pastel p-5">
-      <h1 class="text-xl font-bold flex items-center gap-2">✨ 本月總覽</h1>
-
-      <div class="grid grid-cols-3 text-center mt-4 text-sm">
-        <div>
-          <p class="text-slate-500">收入</p>
-          <p id="sumIncome" class="text-lg font-semibold text-green-600">$0</p>
-        </div>
-        <div>
-          <p class="text-slate-500">儲蓄</p>
-          <p id="sumSaving" class="text-lg font-semibold text-blue-600">$0</p>
-        </div>
-        <div>
-          <p class="text-slate-500">支出</p>
-          <p id="sumExpense" class="text-lg font-semibold text-red-500">$0</p>
-        </div>
-      </div>
-
-      <div class="mt-4 flex items-center gap-2">
-        <label class="text-xs text-slate-500">月份</label>
+    <section class="bg-white rounded-2xl shadow-soft border border-pastel p-5 relative">
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-xl font-bold flex items-center gap-2">✨ 本月總覽</h1>
         <input
           id="monthFilter"
           type="month"
-          class="px-2 py-1.5 rounded-xl border border-slate-300 text-xs bg-white"
+          class="px-2 py-1.5 rounded-xl border border-pastel text-xs bg-milk2 text-ink outline-none"
         />
       </div>
+
+      <div class="flex justify-between items-center bg-milk2 rounded-xl p-3 mb-4">
+        <div class="text-center w-1/3">
+          <p class="text-[11px] text-slate-500 mb-1">收入</p>
+          <p id="sumIncome" class="text-sm font-semibold text-green-600">$0</p>
+        </div>
+        <div class="text-center w-1/3 border-l border-r border-white">
+          <p class="text-[11px] text-slate-500 mb-1">支出</p>
+          <p id="sumExpense" class="text-sm font-semibold text-red-400">$0</p>
+        </div>
+        <div class="text-center w-1/3">
+          <p class="text-[11px] text-slate-500 mb-1">儲蓄</p>
+          <p id="sumSaving" class="text-sm font-semibold text-blue-400">$0</p>
+        </div>
+      </div>
       
-      <div class="mt-4">
+      <div class="mb-4">
         <canvas id="expensePieChart" height="130" style="max-width:180px; margin:0 auto;"></canvas>
+      </div>
+
+      <div class="bg-berry text-white rounded-xl p-4 flex justify-between items-center shadow-sm">
+        <div class="flex flex-col">
+          <span class="text-xs opacity-80 mb-0.5">本月可用現金</span>
+          <span class="text-xs opacity-60">(收入 - 支出 - 儲蓄)</span>
+        </div>
+        <span id="sumBalance" class="text-xl font-bold">$0</span>
       </div>
     </section>
 
     <section class="bg-white rounded-2xl shadow-soft border border-pastel p-5 border-l-4 border-l-berry">
       <div class="flex justify-between items-center mb-3">
-        <h2 class="text-lg font-bold flex items-center gap-2 text-berry">📝 代繳清單試算</h2>
+        <h2 class="text-lg font-bold flex items-center gap-2 text-berry">📝 固定代繳筆記本</h2>
         <button id="toggleBillBtn" class="text-xs bg-milk2 px-2 py-1 rounded-lg text-berry">
           收合 ▼
         </button>
       </div>
 
       <div id="billSectionContent">
-        <div class="bg-milk2 rounded-xl p-3 mb-4">
-          <div class="flex justify-between text-sm mb-1">
-            <span class="text-slate-500">本月總收入</span>
-            <span id="calcIncome" class="font-medium">$0</span>
-          </div>
-          <div class="flex justify-between text-sm mb-2 border-b border-white pb-2">
-            <span class="text-slate-500">扣除代繳總額</span>
-            <span id="calcBills" class="font-medium text-slate-600">-$0</span>
-          </div>
-          <div class="flex justify-between text-base font-bold">
-            <span>剩餘可支配</span>
-            <span id="calcBalance" class="text-berry">$0</span>
-          </div>
-          <p class="text-[10px] text-slate-400 mt-2 text-center">
-            * 收入依據上方本月紀錄自動計算
-          </p>
-        </div>
+        <div id="billList" class="space-y-2 mt-2"></div>
 
-        <div id="billList" class="space-y-2"></div>
-
-        <button id="addBillBtn" class="w-full mt-3 py-2 border border-dashed border-berry text-berry rounded-xl text-xs font-medium hover:bg-milk2 transition">
-          ＋ 新增代繳項目
+        <button id="addBillBtn" class="w-full mt-4 py-2 border border-dashed border-berry text-berry rounded-xl text-xs font-medium hover:bg-milk2 transition">
+          ＋ 新增筆記項目
         </button>
       </div>
     </section>
-
 
     <section class="bg-white rounded-2xl shadow-soft border border-pastel p-5">
       <h2 class="text-lg font-semibold flex items-center gap-2">🍓 新增記錄</h2>
@@ -232,7 +220,7 @@
         id="toggleRecords"
         class="w-full flex justify-between items-center py-2 px-3 bg-milk2 rounded-xl text-sm font-semibold"
       >
-        <span>📋 本月支出明細</span>
+        <span>📋 本月明細清單</span>
         <span id="recordsArrow">▼</span>
       </button>
 
@@ -267,6 +255,50 @@
 
   <div id="categoryBudgetStatus" class="space-y-1 mt-3 max-w-xl mx-auto px-4 pb-10"></div>
 
+  <button id="calcFab" class="fixed bottom-6 right-6 bg-berry text-white w-14 h-14 rounded-full shadow-float flex items-center justify-center text-2xl z-40 hover:bg-pink-500 transition-transform active:scale-95">
+    🧮
+  </button>
+
+  <div id="calcModal" class="fixed inset-0 bg-black/20 z-50 hidden items-center justify-center backdrop-blur-sm">
+    <div class="bg-white p-5 rounded-3xl shadow-xl w-72 border border-pastel slide">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-ink font-bold flex items-center gap-2">🌸 小計算機</h3>
+        <button id="closeCalcBtn" class="text-slate-400 hover:text-red-400 text-2xl leading-none">&times;</button>
+      </div>
+      
+      <div class="bg-milk2 rounded-xl p-3 mb-4 text-right overflow-hidden shadow-inner">
+        <div id="calcHistory" class="text-xs text-slate-400 min-h-[16px] tracking-wider"></div>
+        <div id="calcDisplay" class="text-3xl font-bold text-ink mt-1 truncate">0</div>
+      </div>
+      
+      <div class="grid grid-cols-4 gap-2 text-sm" id="calcKeypad">
+        <button class="bg-slate-100 text-ink p-3 rounded-xl font-medium hover:bg-slate-200" data-val="C">C</button>
+        <button class="bg-slate-100 text-ink p-3 rounded-xl font-medium hover:bg-slate-200" data-val="DEL">⌫</button>
+        <button class="bg-slate-100 text-ink p-3 rounded-xl font-medium hover:bg-slate-200" data-val="%">%</button>
+        <button class="bg-blush text-white p-3 rounded-xl font-bold hover:bg-berry" data-val="/">÷</button>
+
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val="7">7</button>
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val="8">8</button>
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val="9">9</button>
+        <button class="bg-blush text-white p-3 rounded-xl font-bold hover:bg-berry" data-val="*">×</button>
+
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val="4">4</button>
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val="5">5</button>
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val="6">6</button>
+        <button class="bg-blush text-white p-3 rounded-xl font-bold hover:bg-berry" data-val="-">-</button>
+
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val="1">1</button>
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val="2">2</button>
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val="3">3</button>
+        <button class="bg-blush text-white p-3 rounded-xl font-bold hover:bg-berry" data-val="+">+</button>
+
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk col-span-2" data-val="0">0</button>
+        <button class="bg-white border border-pastel text-ink p-3 rounded-xl font-medium shadow-sm hover:bg-milk" data-val=".">.</button>
+        <button class="bg-berry text-white p-3 rounded-xl font-bold shadow-md hover:bg-pink-500" data-val="=">=</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
@@ -287,12 +319,13 @@
 
     const STORAGE_KEY = "cute-book-entries-v2";
     const CATEGORY_BUDGET_KEY = "cute-budget-category-v1";
-    const FIXED_BILLS_KEY = "cute-fixed-bills-v1"; // NEW Key
+    const FIXED_BILLS_KEY = "cute-fixed-bills-v2"; 
 
     /* ------- DOM ------- */
     const sumIncome = document.getElementById("sumIncome");
     const sumSaving = document.getElementById("sumSaving");
     const sumExpense = document.getElementById("sumExpense");
+    const sumBalance = document.getElementById("sumBalance"); 
 
     const monthFilter = document.getElementById("monthFilter");
     const btnIncome = document.getElementById("btnIncome");
@@ -319,13 +352,9 @@
     const budgetArrow = document.getElementById("budgetArrow");
 
     const categoryBudgetStatusBox = document.getElementById("categoryBudgetStatus");
-    
-    // NEW DOM for Bills
+
     const billListEl = document.getElementById("billList");
     const addBillBtn = document.getElementById("addBillBtn");
-    const calcIncomeEl = document.getElementById("calcIncome");
-    const calcBillsEl = document.getElementById("calcBills");
-    const calcBalanceEl = document.getElementById("calcBalance");
     const toggleBillBtn = document.getElementById("toggleBillBtn");
     const billSectionContent = document.getElementById("billSectionContent");
 
@@ -336,14 +365,13 @@
     let selectedSubCategory = null;
     let categoryBudgets = {};
     let pieChart = null;
-    
-    // 預設代繳清單 (依照妳的截圖設定)
+
     let fixedBills = [
       { id: 'b1', name: '房租+水電', amount: 18186, done: false },
       { id: 'b2', name: '健保', amount: 1982, done: false },
       { id: 'b3', name: '健保', amount: 826, done: false },
       { id: 'b4', name: '手機費', amount: 1657, done: false },
-      { id: 'b5', name: '卡費', amount: 16393, done: true } // 截圖中已打勾
+      { id: 'b5', name: '卡費', amount: 16393, done: true } 
     ];
 
     function showError(msg) {
@@ -351,12 +379,8 @@
       formError.classList.remove("hidden");
     }
 
-    // ⚠️ 替換這裡！請使用您在步驟三中部署 Web App 後的「已部署網址」
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec'; 
 
-    /**
-     * 處理新增或刪除請求
-     */
     async function sendActionToSheet(data) {
         const isDelete = data.action === 'DELETE';
         const actionName = isDelete ? '刪除' : '新增';
@@ -382,21 +406,13 @@
 
         } catch (err) {
             console.error(`❌ ${actionName}時發生錯誤:`, err);
-            alert(`${actionName}發生錯誤，請檢查網路或後台`);
             return false;
         }
     }
 
-    /**
-     * 從 Google Sheet (doGet) 讀取所有資料並更新本地
-     */
     async function loadDataFromSheet() {
-        console.log('🔄 嘗試從雲端同步資料...');
         try {
-            const response = await fetch(SCRIPT_URL, { 
-                method: 'GET' 
-            });
-
+            const response = await fetch(SCRIPT_URL, { method: 'GET' });
             const result = await response.json();
 
             if (result.status === 'success' && Array.isArray(result.data)) {
@@ -407,12 +423,8 @@
                 }));
                 
                 saveEntries();
-                console.log(`✅ 雲端同步完成！共載入 ${entries.length} 筆紀錄。`);
-                render(); // 同步完再 render 一次確保數據正確
+                render(); 
                 return true;
-            } else {
-                console.error('❌ 雲端資料讀取失敗:', result.message);
-                return false;
             }
         } catch (err) {
             console.error('❌ 雲端連線錯誤 (GET):', err);
@@ -431,14 +443,14 @@
       dateInput.value = `${yyyy}-${mm}-${dd}`;
       monthFilter.value = `${yyyy}-${mm}`;
 
-      loadEntries();        // 先讀本地，讓畫面快一點
+      loadEntries();       
       loadCategoryBudgets();
-      loadFixedBills();     // NEW 讀取固定支出
+      loadFixedBills();
       renderBudgetInputs();
-      renderFixedBills();   // NEW 渲染代繳清單
+      renderFixedBills();
       render();
 
-      await loadDataFromSheet(); // 背景同步雲端
+      await loadDataFromSheet(); 
     }
 
     /* =========================================
@@ -448,64 +460,44 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       entries = raw ? JSON.parse(raw) : [];
     }
-
     function saveEntries() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     }
-
     function loadCategoryBudgets() {
       const raw = localStorage.getItem(CATEGORY_BUDGET_KEY);
       categoryBudgets = raw ? JSON.parse(raw) : {};
     }
-
     function saveCategoryBudgets() {
       localStorage.setItem(CATEGORY_BUDGET_KEY, JSON.stringify(categoryBudgets));
     }
-    
-    // NEW LocalStorage for Bills
     function loadFixedBills() {
       const raw = localStorage.getItem(FIXED_BILLS_KEY);
-      // 如果本地有存，就用本地的；如果沒有，就用預設的 (包含妳截圖那些)
       if (raw) {
         fixedBills = JSON.parse(raw);
       } else {
-        saveFixedBills(); // 存入預設值
+        saveFixedBills(); 
       }
     }
-    
     function saveFixedBills() {
       localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills));
-      renderFixedBills(); // 存檔後重繪
+      renderFixedBills(); 
     }
 
-    /* =========================================
-        Money Format
-    ========================================= */
     function formatMoney(n) {
       if (!n) return "$0";
-      return (
-        "$" +
-        n
-          .toFixed(0)
-          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      );
+      return "$" + n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     /* =========================================
-        NEW FEATURE: 代繳清單邏輯
+        代繳清單 (純筆記本)
     ========================================= */
     function renderFixedBills() {
       billListEl.innerHTML = "";
       
-      let totalBills = 0;
-      
       fixedBills.forEach((bill, index) => {
-        totalBills += Number(bill.amount);
-        
         const row = document.createElement("div");
-        row.className = "flex items-center gap-2 text-sm py-1";
+        row.className = "flex items-center gap-2 py-1.5 border-b border-pastel last:border-0";
         
-        // Checkbox
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.className = "custom-checkbox flex-shrink-0";
@@ -515,34 +507,31 @@
           saveFixedBills();
         };
 
-        // Name Input
         const nameInput = document.createElement("input");
         nameInput.type = "text";
         nameInput.value = bill.name;
-        nameInput.className = `w-full bg-transparent border-b border-transparent focus:border-slate-300 outline-none px-1 ${bill.done ? 'bill-done' : ''}`;
-        nameInput.placeholder = "項目名稱";
+        nameInput.className = `w-full bg-transparent outline-none px-1 text-sm ${bill.done ? 'bill-done' : 'text-ink'}`;
+        nameInput.placeholder = "輸入項目";
         nameInput.onchange = (e) => {
           fixedBills[index].name = e.target.value;
           saveFixedBills();
         };
 
-        // Amount Input
         const amtInput = document.createElement("input");
         amtInput.type = "number";
         amtInput.value = bill.amount;
-        amtInput.className = `w-20 text-right bg-transparent border-b border-transparent focus:border-slate-300 outline-none px-1 ${bill.done ? 'bill-done' : ''}`;
+        amtInput.className = `w-20 text-right bg-transparent outline-none px-1 text-sm ${bill.done ? 'bill-done' : 'text-ink'}`;
         amtInput.placeholder = "$";
         amtInput.onchange = (e) => {
           fixedBills[index].amount = Number(e.target.value);
           saveFixedBills();
         };
 
-        // Delete Btn
         const delBtn = document.createElement("button");
-        delBtn.textContent = "×";
-        delBtn.className = "text-slate-300 px-2 text-lg hover:text-red-400";
+        delBtn.innerHTML = "&times;";
+        delBtn.className = "text-slate-300 px-2 text-xl hover:text-red-400 pb-1";
         delBtn.onclick = () => {
-          if (confirm(`刪除 ${bill.name}？`)) {
+          if (confirm(`刪除此筆記項目？`)) {
             fixedBills.splice(index, 1);
             saveFixedBills();
           }
@@ -554,50 +543,13 @@
         row.appendChild(delBtn);
         billListEl.appendChild(row);
       });
-      
-      // 更新試算區塊數字
-      updateBillCalc(totalBills);
     }
 
-    function updateBillCalc(totalBills) {
-      // 1. 取得本月總收入
-      const list = getFilteredEntries();
-      let currentMonthIncome = 0;
-      list.forEach(e => {
-        if (e.type === 'income') currentMonthIncome += e.amount;
-      });
-
-      // 2. 計算
-      const balance = currentMonthIncome - totalBills;
-
-      // 3. 渲染
-      calcIncomeEl.textContent = formatMoney(currentMonthIncome);
-      calcBillsEl.textContent = "-" + formatMoney(totalBills);
-      
-      calcBalanceEl.textContent = formatMoney(balance);
-      
-      // 顏色處理：透支變紅，有錢變綠
-      if (balance < 0) {
-        calcBalanceEl.classList.remove("text-berry");
-        calcBalanceEl.classList.add("text-danger");
-      } else {
-        calcBalanceEl.classList.remove("text-danger");
-        calcBalanceEl.classList.add("text-berry"); // 或 success
-      }
-    }
-
-    // 新增代繳按鈕事件
     addBillBtn.onclick = () => {
-      fixedBills.push({
-        id: Date.now().toString(),
-        name: "",
-        amount: 0,
-        done: false
-      });
+      fixedBills.push({ id: Date.now().toString(), name: "", amount: "", done: false });
       saveFixedBills();
     };
 
-    // 收合按鈕事件
     toggleBillBtn.onclick = () => {
        const isHidden = billSectionContent.classList.contains("hidden");
        if (isHidden) {
@@ -608,7 +560,6 @@
          toggleBillBtn.textContent = "展開 ▲";
        }
     };
-
 
     /* =========================================
         分類渲染
@@ -684,9 +635,6 @@
       });
     }
 
-    /* =========================================
-        類型切換
-    ========================================= */
     function highlightType(type) {
       [btnIncome, btnExpense, btnSaving].forEach((btn) =>
         btn.classList.remove("btn-selected")
@@ -722,14 +670,6 @@
       highlightType("saving");
     };
 
-    setTimeout(() => {
-      amountInput.focus();
-    }, 100);
-
-
-    /* =========================================
-        新增紀錄
-    ========================================= */
     entryForm.onsubmit = async (e) => { 
       e.preventDefault();
       formError.classList.add("hidden");
@@ -754,115 +694,42 @@
       const id = Date.now().toString();
 
       const entry = {
-        id,
-        type: selectedType,
-        amount,
-        date,
-        note,
-        mainCategory: mainCat,
-        subCategory: subCat,
+        id, type: selectedType, amount, date, note,
+        mainCategory: mainCat, subCategory: subCat,
         createdAt: new Date().toISOString(),
       };
 
       entries.push(entry);
       saveEntries();
-      
-      // 更新畫面
       render(); 
 
       const success = await sendActionToSheet(entry);
-     
       if (success) {
         amountInput.value = "";
         noteInput.value = "";
       }
     }; 
 
- 
-    /* =========================================
-        過濾當月資料
-    ========================================= */
     function getFilteredEntries() {
       const month = monthFilter.value;
       return entries
         .filter((e) => e.date?.startsWith(month))
-        .sort((a, b) =>
-          (b.date + b.createdAt).localeCompare(a.date + a.createdAt)
-        );
+        .sort((a, b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt));
     }
 
-    /* =========================================
-        Render 主控
-    ========================================= */
     function render() {
       const list = getFilteredEntries();
       renderSummary(list);
       renderList(list);
       renderCategoryBudgetStatus(list);
       renderExpensePieChart(list);
-      
-      // NEW: 每次 render 也要更新一下清單的數字 (因為本月收入可能變了)
-      let totalBills = 0;
-      fixedBills.forEach(b => totalBills += Number(b.amount));
-      updateBillCalc(totalBills);
     }
 
     /* =========================================
-        分類預算狀態
-    ========================================= */
-    function renderCategoryBudgetStatus(list) {
-      categoryBudgetStatusBox.innerHTML = "";
-
-      const categorySpent = {};
-      list.forEach((e) => {
-        if (e.type === "expense" && e.mainCategory) {
-          if (!categorySpent[e.mainCategory])
-            categorySpent[e.mainCategory] = 0;
-          categorySpent[e.mainCategory] += e.amount;
-        }
-      });
-
-      Object.keys(categoryBudgets).forEach((cat) => {
-        const budget = categoryBudgets[cat] || 0;
-        const spent = categorySpent[cat] || 0;
-
-        if (!budget && !spent) return;
-
-        const remain = budget - spent;
-        const isOver = remain < 0;
-
-        const row = document.createElement("div");
-        row.className = "p-2 rounded-lg text-xs";
-
-        row.innerHTML = `
-          <div class="flex justify-between">
-            <span>${cat}</span>
-            <span class="${isOver ? "text-red-500 font-semibold" : "text-ink"}">
-              已花 ${formatMoney(spent)}
-              ${
-                budget
-                  ? `｜${
-                      isOver
-                        ? `<span class='text-red-500'>超支 ${formatMoney(Math.abs(remain))}</span>`
-                        : `剩餘 ${formatMoney(remain)}`
-                    }`
-                  : ""
-              }
-            </span>
-          </div>
-        `;
-
-        categoryBudgetStatusBox.appendChild(row);
-      });
-    }
-
-    /* =========================================
-        Summary
+        Summary (含餘額計算)
     ========================================= */
     function renderSummary(list) {
-      let income = 0,
-        saving = 0,
-        expense = 0;
+      let income = 0, saving = 0, expense = 0;
 
       list.forEach((e) => {
         if (e.type === "income") income += e.amount;
@@ -873,10 +740,49 @@
       sumIncome.textContent = formatMoney(income);
       sumSaving.textContent = formatMoney(saving);
       sumExpense.textContent = formatMoney(expense);
+      
+      const balance = income - expense - saving;
+      sumBalance.textContent = formatMoney(balance);
     }
 
     /* =========================================
-        明細列表
+        分類預算狀態
+    ========================================= */
+    function renderCategoryBudgetStatus(list) {
+      categoryBudgetStatusBox.innerHTML = "";
+      const categorySpent = {};
+      list.forEach((e) => {
+        if (e.type === "expense" && e.mainCategory) {
+          if (!categorySpent[e.mainCategory]) categorySpent[e.mainCategory] = 0;
+          categorySpent[e.mainCategory] += e.amount;
+        }
+      });
+
+      Object.keys(categoryBudgets).forEach((cat) => {
+        const budget = categoryBudgets[cat] || 0;
+        const spent = categorySpent[cat] || 0;
+        if (!budget && !spent) return;
+
+        const remain = budget - spent;
+        const isOver = remain < 0;
+
+        const row = document.createElement("div");
+        row.className = "p-2 rounded-lg text-xs";
+        row.innerHTML = `
+          <div class="flex justify-between">
+            <span>${cat}</span>
+            <span class="${isOver ? "text-red-500 font-semibold" : "text-ink"}">
+              已花 ${formatMoney(spent)}
+              ${budget ? `｜${isOver ? `<span class='text-red-500'>超支 ${formatMoney(Math.abs(remain))}</span>` : `剩餘 ${formatMoney(remain)}`}` : ""}
+            </span>
+          </div>
+        `;
+        categoryBudgetStatusBox.appendChild(row);
+      });
+    }
+
+    /* =========================================
+        明細清單
     ========================================= */
     function renderList(list) {
       recordCount.textContent = `共 ${list.length} 筆`;
@@ -891,45 +797,29 @@
       list.forEach((e) => {
         const card = document.createElement("div");
         card.className = "bg-milk2 rounded-xl p-3 text-sm";
-
-        let typeText =
-          e.type === "income"
-            ? "💗 收入"
-            : e.type === "saving"
-            ? "🐷 儲蓄"
-            : "🧾 支出";
+        let typeText = e.type === "income" ? "💗 收入" : e.type === "saving" ? "🐷 儲蓄" : "🧾 支出";
 
         card.innerHTML = `
           <div class="flex justify-between items-start gap-2">
             <div>
               <p class="font-medium">${typeText}</p>
-              <p class="text-[11px] text-slate-500">
-                ${e.date ? e.date.split("T")[0] : ""}
-              </p>
-              ${
-                e.type === "expense"
-                  ? `<p class="text-[11px] text-slate-500">${e.mainCategory}｜${e.subCategory || "未分類"}</p>`
-                  : ""
-              }
+              <p class="text-[11px] text-slate-500">${e.date ? e.date.split("T")[0] : ""}</p>
+              ${e.type === "expense" ? `<p class="text-[11px] text-slate-500">${e.mainCategory}｜${e.subCategory || "未分類"}</p>` : ""}
               <p class="text-[11px] text-slate-400">${e.note || "（無備註）"}</p>
             </div>
-
             <div class="text-right">
               <p class="text-base font-semibold">${formatMoney(e.amount)}</p>
               <button data-id="${e.id}" class="text-[11px] text-red-500 mt-1">刪除</button>
             </div>
           </div>
         `;
-
         mobileList.appendChild(card);
       });
 
       mobileList.querySelectorAll("button[data-id]").forEach((btn) => {
           btn.onclick = async () => {
               const entryId = btn.dataset.id;
-              if (!confirm(`確定要刪除這筆 ID: ${entryId} 的紀錄嗎？雲端也會同步刪除。`)) {
-                  return;
-              }
+              if (!confirm(`確定要刪除這筆 ID: ${entryId} 的紀錄嗎？雲端也會同步刪除。`)) return;
 
               const deletePayload = { action: 'DELETE', id: entryId };
               const success = await sendActionToSheet(deletePayload);
@@ -938,47 +828,31 @@
                   entries = entries.filter((e) => e.id !== entryId);
                   saveEntries();
                   render();
-                  alert("刪除成功，雲端與本地已同步！");
-              } else {
-                  alert("雲端刪除失敗，本地紀錄仍保留。");
-              }
+              } 
           };
       });
     }
 
-    /* =========================================
-        預算 UI
-    ========================================= */
     function renderBudgetInputs() {
       budgetInputs.innerHTML = "";
       Object.keys(categoryData).forEach((cat) => {
         const row = document.createElement("div");
         row.className = "flex justify-between items-center";
-
         row.innerHTML = `
           <span class="text-sm">${cat}</span>
-          <input
-            class="w-24 px-2 py-1 rounded-lg border border-slate-300 text-sm"
-            type="number"
-            data-cat="${cat}"
-            value="${categoryBudgets[cat] || ""}"
-          />
+          <input class="w-24 px-2 py-1 rounded-lg border border-slate-300 text-sm" type="number" data-cat="${cat}" value="${categoryBudgets[cat] || ""}"/>
         `;
-
         budgetInputs.appendChild(row);
       });
     }
 
     saveBudgetBtn.onclick = () => {
       const inputs = budgetInputs.querySelectorAll("input");
-      inputs.forEach((i) => {
-        categoryBudgets[i.dataset.cat] = Number(i.value || 0);
-      });
+      inputs.forEach((i) => { categoryBudgets[i.dataset.cat] = Number(i.value || 0); });
       saveCategoryBudgets();
       alert("分類預算已更新 ✓");
     };
 
-    /* 預算展開 */
     budgetBtn.onclick = () => {
       const isOpen = !budgetContent.classList.contains("hidden");
       budgetContent.classList.toggle("hidden");
@@ -987,9 +861,6 @@
 
     monthFilter.onchange = render;
 
-    /* =========================================
-        支出明細收合
-    ========================================= */
     const toggleRecords = document.getElementById("toggleRecords");
     const recordsContent = document.getElementById("recordsContent");
     const recordsArrow = document.getElementById("recordsArrow");
@@ -1001,20 +872,12 @@
       recordsArrow.textContent = recordsOpen ? "▲" : "▼";
     });
 
-    /* =========================================
-        圓餅圖
-    ========================================= */
     function renderExpensePieChart(list) {
       const expenses = list.filter((e) => e.type === "expense");
-
       if (!expenses.length) {
-        if (pieChart) {
-          pieChart.destroy();
-          pieChart = null;
-        }
+        if (pieChart) { pieChart.destroy(); pieChart = null; }
         return;
       }
-
       const categoryMap = {};
       expenses.forEach((e) => {
         if (!categoryMap[e.mainCategory]) categoryMap[e.mainCategory] = 0;
@@ -1026,41 +889,86 @@
       const ctx = document.getElementById("expensePieChart");
 
       if (pieChart) pieChart.destroy();
-
       pieChart = new Chart(ctx, {
         type: "pie",
         data: {
           labels: labels,
-          datasets: [
-            {
-              data: data,
-              backgroundColor: [
-                "#FFB7CE",
-                "#FF6C9F",
-                "#FFE3ED",
-                "#FFD1DC",
-                "#FFC7E3",
-                "#FF8FB2",
-                "#F9A8D4",
-                "#FBCFE8"
-              ],
-              borderWidth: 1
-            }
-          ]
+          datasets: [{
+            data: data,
+            backgroundColor: ["#FFB7CE","#FF6C9F","#FFE3ED","#FFD1DC","#FFC7E3","#FF8FB2","#F9A8D4","#FBCFE8"],
+            borderWidth: 1
+          }]
         },
         options: {
-          plugins: {
-            legend: {
-              display: true,
-              position: "bottom",
-              labels: { font: { size: 12 } }
-            }
-          }
+          plugins: { legend: { display: true, position: "bottom", labels: { font: { size: 12 } } } }
         }
       });
     }
 
-    /* 初始化 */
+    /* =========================================
+        小計算機邏輯
+    ========================================= */
+    const calcFab = document.getElementById('calcFab');
+    const calcModal = document.getElementById('calcModal');
+    const closeCalcBtn = document.getElementById('closeCalcBtn');
+    const calcDisplay = document.getElementById('calcDisplay');
+    const calcHistory = document.getElementById('calcHistory');
+    
+    let currentInput = '0';
+    let previousInput = '';
+    let operator = null;
+
+    calcFab.onclick = () => calcModal.classList.replace('hidden', 'flex');
+    closeCalcBtn.onclick = () => calcModal.classList.replace('flex', 'hidden');
+
+    document.getElementById('calcKeypad').addEventListener('click', (e) => {
+      if(e.target.tagName !== 'BUTTON') return;
+      const val = e.target.getAttribute('data-val');
+
+      if (val >= '0' && val <= '9') {
+        if (currentInput === '0') currentInput = val;
+        else currentInput += val;
+      } else if (val === '.') {
+        if (!currentInput.includes('.')) currentInput += '.';
+      } else if (val === 'C') {
+        currentInput = '0'; previousInput = ''; operator = null; calcHistory.textContent = '';
+      } else if (val === 'DEL') {
+        currentInput = currentInput.slice(0, -1) || '0';
+      } else if (['+', '-', '*', '/'].includes(val)) {
+        if (operator && previousInput) {
+          currentInput = String(calculate(previousInput, currentInput, operator));
+        }
+        operator = val;
+        previousInput = currentInput;
+        currentInput = '0';
+        calcHistory.textContent = `${previousInput} ${val.replace('*','×').replace('/','÷')}`;
+      } else if (val === '%') {
+        currentInput = String(Number(currentInput) / 100);
+      } else if (val === '=') {
+        if (operator && previousInput) {
+          calcHistory.textContent = `${previousInput} ${operator.replace('*','×').replace('/','÷')} ${currentInput} =`;
+          currentInput = String(calculate(previousInput, currentInput, operator));
+          operator = null;
+          previousInput = '';
+        }
+      }
+      
+      calcDisplay.textContent = currentInput;
+    });
+
+    function calculate(num1, num2, op) {
+      const n1 = parseFloat(num1);
+      const n2 = parseFloat(num2);
+      if(isNaN(n1) || isNaN(n2)) return 0;
+      switch(op) {
+        case '+': return n1 + n2;
+        case '-': return n1 - n2;
+        case '*': return n1 * n2;
+        case '/': return n2 === 0 ? 'Error' : n1 / n2;
+        default: return n2;
+      }
+    }
+
     init();
 
   </script>
