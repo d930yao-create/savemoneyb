@@ -83,16 +83,27 @@
       box-shadow: 0 4px 10px rgba(255, 150, 186, 0.25);
     }
 
-    /* Checkbox 自訂樣式 */
     .custom-checkbox {
       accent-color: #FF6C9F;
       width: 18px;
       height: 18px;
+      transition: all 0.3s ease;
     }
     
     .bill-done {
       text-decoration: line-through;
       color: #cbd5e1;
+      opacity: 0.6;
+      transition: all 0.3s ease;
+    }
+    
+    .bill-row-transition {
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .bill-fade-out {
+      opacity: 0;
+      transform: translateY(-10px);
     }
   </style>
 </head>
@@ -255,8 +266,10 @@
 
   <div id="categoryBudgetStatus" class="space-y-1 mt-3 max-w-xl mx-auto px-4 pb-10"></div>
 
-  <button id="calcFab" class="fixed bottom-6 right-6 bg-berry text-white w-14 h-14 rounded-full shadow-float flex items-center justify-center text-2xl z-40 hover:bg-pink-500 transition-transform active:scale-95">
-    🧮
+  <button id="calcFab" class="fixed bottom-6 right-6 bg-berry text-white w-14 h-14 rounded-full shadow-float flex items-center justify-center z-40 hover:bg-pink-500 transition-transform active:scale-95">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25v-.008zm2.25-4.5h.008v.008H10.5v-.008zm0 2.25h.008v.008H10.5v-.008zm0 2.25h.008v.008H10.5v-.008zm2.25-4.5h.008v.008H12.75v-.008zm0 2.25h.008v.008H12.75v-.008zm0 2.25h.008v.008H12.75v-.008zm2.25-4.5h.008v.008H15v-.008zm0 2.25h.008v.008H15v-.008zM12 2.25h-3c-1.243 0-2.25 1.007-2.25 2.25v15c0 1.243 1.007 2.25 2.25 2.25h9c1.243 0 2.25-1.007 2.25-2.25v-15c0-1.243-1.007-2.25-2.25-2.25h-3zm-3 4.5h9v3h-9v-3z" />
+    </svg>
   </button>
 
   <div id="calcModal" class="fixed inset-0 bg-black/20 z-50 hidden items-center justify-center backdrop-blur-sm">
@@ -302,7 +315,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-    /* ------- 分類資料 ------- */
     const categoryData = {
       "🍱 飲食": ["早餐", "午餐", "晚餐", "點心", "宵夜", "小吃", "飲料", "其他"],
       "🚗 交通": ["大眾運輸", "加油", "Uber／計程車", "停車費", "其他"],
@@ -319,9 +331,8 @@
 
     const STORAGE_KEY = "cute-book-entries-v2";
     const CATEGORY_BUDGET_KEY = "cute-budget-category-v1";
-    const FIXED_BILLS_KEY = "cute-fixed-bills-v2"; 
+    const FIXED_BILLS_KEY = "cute-fixed-bills-v3"; 
 
-    /* ------- DOM ------- */
     const sumIncome = document.getElementById("sumIncome");
     const sumSaving = document.getElementById("sumSaving");
     const sumExpense = document.getElementById("sumExpense");
@@ -358,7 +369,6 @@
     const toggleBillBtn = document.getElementById("toggleBillBtn");
     const billSectionContent = document.getElementById("billSectionContent");
 
-    /* ------- 狀態 ------- */
     let entries = [];
     let selectedType = null;
     let selectedMainCategory = null;
@@ -367,12 +377,13 @@
     let pieChart = null;
 
     let fixedBills = [
-      { id: 'b1', name: '房租+水電', amount: 18186, done: false },
-      { id: 'b2', name: '健保', amount: 1982, done: false },
-      { id: 'b3', name: '健保', amount: 826, done: false },
-      { id: 'b4', name: '手機費', amount: 1657, done: false },
-      { id: 'b5', name: '卡費', amount: 16393, done: true } 
+      { id: 'b1', name: '房租+水電', amount: 18186 },
+      { id: 'b2', name: '健保', amount: 1982 },
+      { id: 'b3', name: '健保', amount: 826 },
+      { id: 'b4', name: '手機費', amount: 1657 }
     ];
+
+    let deleteTimers = {}; 
 
     function showError(msg) {
       formError.textContent = msg;
@@ -396,16 +407,13 @@
             const result = await response.json();
 
             if (result.status === 'success') {
-                console.log(`✅ 資料${actionName}成功:`, result.message);
                 return true;
             } else {
-                console.error(`❌ 資料${actionName}失敗:`, result.message);
                 alert(`${actionName}失敗：${result.message}`);
                 return false;
             }
 
         } catch (err) {
-            console.error(`❌ ${actionName}時發生錯誤:`, err);
             return false;
         }
     }
@@ -427,14 +435,10 @@
                 return true;
             }
         } catch (err) {
-            console.error('❌ 雲端連線錯誤 (GET):', err);
             return false;
         }
     }
 
-    /* =========================================
-        初始化
-    ========================================= */
     async function init() {
       const t = new Date();
       const yyyy = t.getFullYear();
@@ -453,9 +457,6 @@
       await loadDataFromSheet(); 
     }
 
-    /* =========================================
-        LocalStorage
-    ========================================= */
     function loadEntries() {
       const raw = localStorage.getItem(STORAGE_KEY);
       entries = raw ? JSON.parse(raw) : [];
@@ -480,7 +481,6 @@
     }
     function saveFixedBills() {
       localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills));
-      renderFixedBills(); 
     }
 
     function formatMoney(n) {
@@ -488,29 +488,23 @@
       return "$" + n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    /* =========================================
-        代繳清單 (純筆記本)
-    ========================================= */
     function renderFixedBills() {
       billListEl.innerHTML = "";
       
       fixedBills.forEach((bill, index) => {
         const row = document.createElement("div");
-        row.className = "flex items-center gap-2 py-1.5 border-b border-pastel last:border-0";
+        row.className = "flex items-center gap-2 py-1.5 border-b border-pastel last:border-0 bill-row-transition";
+        row.id = `bill-row-${bill.id}`;
         
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.className = "custom-checkbox flex-shrink-0";
-        checkbox.checked = bill.done;
-        checkbox.onclick = () => {
-          fixedBills[index].done = checkbox.checked;
-          saveFixedBills();
-        };
+        checkbox.checked = false; 
 
         const nameInput = document.createElement("input");
         nameInput.type = "text";
         nameInput.value = bill.name;
-        nameInput.className = `w-full bg-transparent outline-none px-1 text-sm ${bill.done ? 'bill-done' : 'text-ink'}`;
+        nameInput.className = "w-full bg-transparent outline-none px-1 text-sm text-ink";
         nameInput.placeholder = "輸入項目";
         nameInput.onchange = (e) => {
           fixedBills[index].name = e.target.value;
@@ -520,7 +514,7 @@
         const amtInput = document.createElement("input");
         amtInput.type = "number";
         amtInput.value = bill.amount;
-        amtInput.className = `w-20 text-right bg-transparent outline-none px-1 text-sm ${bill.done ? 'bill-done' : 'text-ink'}`;
+        amtInput.className = "w-20 text-right bg-transparent outline-none px-1 text-sm text-ink";
         amtInput.placeholder = "$";
         amtInput.onchange = (e) => {
           fixedBills[index].amount = Number(e.target.value);
@@ -531,9 +525,39 @@
         delBtn.innerHTML = "&times;";
         delBtn.className = "text-slate-300 px-2 text-xl hover:text-red-400 pb-1";
         delBtn.onclick = () => {
-          if (confirm(`刪除此筆記項目？`)) {
+          if (confirm(`確定刪除此筆記項目？`)) {
             fixedBills.splice(index, 1);
             saveFixedBills();
+            renderFixedBills();
+          }
+        };
+
+        checkbox.onclick = () => {
+          if (checkbox.checked) {
+            nameInput.classList.add("bill-done");
+            amtInput.classList.add("bill-done");
+            
+            deleteTimers[bill.id] = setTimeout(() => {
+              row.classList.add("bill-fade-out");
+              
+              setTimeout(() => {
+                const currentIdx = fixedBills.findIndex(b => b.id === bill.id);
+                if (currentIdx > -1) {
+                  fixedBills.splice(currentIdx, 1);
+                  saveFixedBills();
+                  renderFixedBills(); 
+                }
+              }, 500); 
+            }, 3000);
+
+          } else {
+            nameInput.classList.remove("bill-done");
+            amtInput.classList.remove("bill-done");
+            
+            if (deleteTimers[bill.id]) {
+              clearTimeout(deleteTimers[bill.id]);
+              delete deleteTimers[bill.id];
+            }
           }
         };
 
@@ -546,8 +570,9 @@
     }
 
     addBillBtn.onclick = () => {
-      fixedBills.push({ id: Date.now().toString(), name: "", amount: "", done: false });
+      fixedBills.push({ id: Date.now().toString(), name: "", amount: "" });
       saveFixedBills();
+      renderFixedBills();
     };
 
     toggleBillBtn.onclick = () => {
@@ -561,9 +586,6 @@
        }
     };
 
-    /* =========================================
-        分類渲染
-    ========================================= */
     function renderMainCategories() {
       mainCategoryButtons.innerHTML = "";
       let openedPopup = null;
@@ -725,9 +747,6 @@
       renderExpensePieChart(list);
     }
 
-    /* =========================================
-        Summary (含餘額計算)
-    ========================================= */
     function renderSummary(list) {
       let income = 0, saving = 0, expense = 0;
 
@@ -745,9 +764,6 @@
       sumBalance.textContent = formatMoney(balance);
     }
 
-    /* =========================================
-        分類預算狀態
-    ========================================= */
     function renderCategoryBudgetStatus(list) {
       categoryBudgetStatusBox.innerHTML = "";
       const categorySpent = {};
@@ -781,9 +797,6 @@
       });
     }
 
-    /* =========================================
-        明細清單
-    ========================================= */
     function renderList(list) {
       recordCount.textContent = `共 ${list.length} 筆`;
       mobileList.innerHTML = "";
@@ -905,9 +918,6 @@
       });
     }
 
-    /* =========================================
-        小計算機邏輯
-    ========================================= */
     const calcFab = document.getElementById('calcFab');
     const calcModal = document.getElementById('calcModal');
     const closeCalcBtn = document.getElementById('closeCalcBtn');
