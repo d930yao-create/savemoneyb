@@ -112,8 +112,8 @@
   <div class="max-w-xl mx-auto px-4 py-6 space-y-6">
 
     <section class="bg-white rounded-2xl shadow-soft border border-pastel p-5 relative">
-      <div class="flex justify-between items-center mb-4">
-        <h1 class="text-xl font-bold flex items-center gap-2">✨ 本月總覽</h1>
+      <div class="flex justify-between items-center mb-4 gap-2">
+        <h1 class="text-lg sm:text-xl font-bold flex items-center gap-2 whitespace-nowrap">✨ 本月總覽</h1>
         <input
           id="monthFilter"
           type="month"
@@ -124,7 +124,7 @@
       <div class="flex justify-between items-center bg-milk2 rounded-xl p-3 mb-4">
         <div class="text-center w-1/3">
           <p class="text-[11px] text-slate-500 mb-1">收入</p>
-          <p id="sumIncome" class="text-sm font-semibold text-green-600">$0</p>
+          <p id="sumIncome" class="text-sm font-semibold text-green-500">$0</p>
         </div>
         <div class="text-center w-1/3 border-l border-r border-white">
           <p class="text-[11px] text-slate-500 mb-1">支出</p>
@@ -136,16 +136,18 @@
         </div>
       </div>
       
-      <div class="mb-4">
-        <canvas id="expensePieChart" height="130" style="max-width:180px; margin:0 auto;"></canvas>
+      <div class="mb-5 flex justify-center w-full">
+        <div class="w-full max-w-[260px] h-[160px]">
+          <canvas id="expensePieChart"></canvas>
+        </div>
       </div>
 
-      <div class="bg-berry text-white rounded-xl p-4 flex justify-between items-center shadow-sm">
+      <div class="bg-milk2 border border-pastel rounded-xl p-4 flex justify-between items-center shadow-sm">
         <div class="flex flex-col">
-          <span class="text-xs opacity-80 mb-0.5">本月可用現金</span>
-          <span class="text-xs opacity-60">(收入 - 支出 - 儲蓄)</span>
+          <span class="text-xs text-slate-500 mb-0.5">本月可用現金</span>
+          <span class="text-[10px] text-slate-400">(收入 - 支出 - 儲蓄)</span>
         </div>
-        <span id="sumBalance" class="text-xl font-bold">$0</span>
+        <span id="sumBalance" class="text-xl font-bold text-berry">$0</span>
       </div>
     </section>
 
@@ -810,19 +812,32 @@
       list.forEach((e) => {
         const card = document.createElement("div");
         card.className = "bg-milk2 rounded-xl p-3 text-sm";
-        let typeText = e.type === "income" ? "💗 收入" : e.type === "saving" ? "🐷 儲蓄" : "🧾 支出";
+        
+        // 製作圓角底色小標籤
+        let typeBadge = e.type === "income" 
+          ? `<span class="inline-block px-2 py-0.5 bg-green-50 text-green-600 rounded-md text-[10px] mr-1">💗 收入</span>` 
+          : e.type === "saving" 
+          ? `<span class="inline-block px-2 py-0.5 bg-blue-50 text-blue-500 rounded-md text-[10px] mr-1">🐷 儲蓄</span>` 
+          : `<span class="inline-block px-2 py-0.5 bg-white text-berry border border-pastel rounded-md text-[10px] mr-1">🧾 支出</span>`;
+
+        let titleText = e.type === "expense" 
+          ? `<span class="font-medium text-[13px] text-ink">${e.mainCategory}｜${e.subCategory || "未分類"}</span>`
+          : `<span class="font-medium text-[13px] text-ink">${e.type === "income" ? "一般收入" : "撲滿儲蓄"}</span>`;
 
         card.innerHTML = `
           <div class="flex justify-between items-start gap-2">
             <div>
-              <p class="font-medium">${typeText}</p>
-              <p class="text-[11px] text-slate-500">${e.date ? e.date.split("T")[0] : ""}</p>
-              ${e.type === "expense" ? `<p class="text-[11px] text-slate-500">${e.mainCategory}｜${e.subCategory || "未分類"}</p>` : ""}
-              <p class="text-[11px] text-slate-400">${e.note || "（無備註）"}</p>
+              <div class="flex items-center mb-1">
+                ${typeBadge} ${titleText}
+              </div>
+              <p class="text-[11px] text-slate-400 mt-0.5">
+                ${e.date ? e.date.split("T")[0] : ""} 
+                ${e.note ? "・" + e.note : ""}
+              </p>
             </div>
             <div class="text-right">
-              <p class="text-base font-semibold">${formatMoney(e.amount)}</p>
-              <button data-id="${e.id}" class="text-[11px] text-red-500 mt-1">刪除</button>
+              <p class="text-base font-semibold text-ink">${formatMoney(e.amount)}</p>
+              <button data-id="${e.id}" class="text-[11px] text-red-400 mt-1 hover:text-red-600 transition">刪除</button>
             </div>
           </div>
         `;
@@ -909,11 +924,24 @@
           datasets: [{
             data: data,
             backgroundColor: ["#FFB7CE","#FF6C9F","#FFE3ED","#FFD1DC","#FFC7E3","#FF8FB2","#F9A8D4","#FBCFE8"],
-            borderWidth: 1
+            borderWidth: 1,
+            borderColor: "#fff"
           }]
         },
         options: {
-          plugins: { legend: { display: true, position: "bottom", labels: { font: { size: 12 } } } }
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { 
+              display: true, 
+              position: "bottom", 
+              labels: { 
+                font: { size: 11 },
+                padding: 12,
+                boxWidth: 12
+              } 
+            } 
+          }
         }
       });
     }
