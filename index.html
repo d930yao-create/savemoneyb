@@ -167,7 +167,8 @@
       </div>
       <form id="entryForm" class="space-y-4 hidden">
         <input id="amountInput" type="number" inputmode="numeric" class="box-border w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" placeholder="金額" />
-        <input id="dateInput" type="date" class="box-border w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" />
+<input id="dateInput" type="date" 
+  class="box-border w-80 px-0 py-2 border-t-0 border-x-0 border-b border-slate-200 text-xs outline-none focus:border-berry focus:ring-0" />
         
         <div id="expenseCategoryBlock" class="hidden space-y-2">
             <div id="mainCategoryButtons" class="grid grid-cols-3 gap-2 text-xs"></div>
@@ -221,12 +222,28 @@
     const STORAGE_KEY = "cute-book-entries-v2", FIXED_BILLS_KEY = "cute-fixed-bills-v3";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec';
 
-    const chartColors = [
-      '#FFB7CE', '#FF6C9F', '#FFE3ED', '#FFD1DC', '#fbcfe8', 
-      '#f9a8d4', '#f472b6', '#fda4af', '#fb7185', '#e879f9', 
-      '#c084fc', '#a78bfa', '#818cf8', '#93c5fd', '#a7f3d0', 
-      '#bbf7d0', '#fef08a', '#fde047', '#fcd34d', '#fca5a5'
-    ];
+const chartColors = [
+  '#FFB7B2', // 蜜桃粉
+  '#FFDAC1', // 奶油橘
+  '#E2F0CB', // 嫩草綠
+  '#B5EAD7', // 薄荷綠
+  '#C7CEEA', // 薰衣草紫
+  '#FF9AA2', // 玫瑰粉
+  '#FFB7CE', // 櫻花粉
+  '#D4F1F4', // 蘇打藍
+  '#AFCBFF', // 天空藍
+  '#D0D0D0', // 芝麻灰 (淡)
+  '#E0BBE4', // 丁香紫
+  '#957DAD', // 藍莓紫
+  '#D291BC', // 覆盆子粉
+  '#FEC8D8', // 糖果粉
+  '#FFDFD3', // 杏桃橙
+  '#FFF5BA', // 檸檬黃
+  '#C5E1A5', // 抹茶綠
+  '#A5D6A7', // 開心果綠
+  '#B3E5FC', // 水藍色
+  '#F48FB1'  // 珊瑚紅 (粉)
+];
 
     let entries = [], fixedBills = [], selectedType = null, selectedMainCategory = null, selectedSubCategory = null, pieChart = null;
 
