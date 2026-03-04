@@ -26,7 +26,7 @@
             ink: "#2b2b3c",
           },
           boxShadow: {
-            soft: "0 0 0 rgba(0,0,0,0)",
+            glass: "0 8px 32px 0 rgba(255, 108, 159, 0.1)",
             float: "0 8px 20px rgba(255, 108, 159, 0.3)",
           },
         },
@@ -35,28 +35,28 @@
   </script>
 
   <style>
-    /* 將動畫時間拉長至 0.6s，讓滑出感更優雅溫柔 */
+    /* 玻璃質感的核心魔法 */
+    .glass {
+      background: rgba(255, 255, 255, 0.65) !important;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    /* 抽屜滑出的優雅動畫 (0.6s 餘韻感) */
     .slide-up-drawer {
       animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes slideUp {
-      from { transform: translateY(100%); opacity: 0.5; }
+      from { transform: translateY(100%); opacity: 0; }
       to   { transform: translateY(0); opacity: 1; }
     }
 
-    button {
-      -webkit-tap-highlight-color: transparent;
-    }
+    button { -webkit-tap-highlight-color: transparent; }
 
-    .hide-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .hide-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* 因為導覽列變扁，上方清單可以看得更多 */
     .scroll-area {
       height: calc(100vh - 300px); 
       min-height: 300px;
@@ -73,28 +73,33 @@
       color: #cbd5e1;
       opacity: 0.6;
     }
+
+    /* 讓 iPhone 原生日曆框更融入背景 */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 0.4;
+    }
   </style>
 </head>
 
-<body class="bg-milk text-ink h-screen overflow-hidden relative">
+<body class="bg-gradient-to-br from-milk via-white to-pastel/30 text-ink h-screen overflow-hidden relative">
   <div class="max-w-xl mx-auto px-4 py-6 h-full flex flex-col space-y-4">
 
-    <section class="bg-white rounded-2xl border border-pastel p-5 flex-shrink-0">
+    <section class="glass rounded-3xl p-5 flex-shrink-0 shadow-glass">
       <div class="flex justify-between items-center mb-4">
         <h1 class="text-lg font-bold whitespace-nowrap">✨ 本月總覽</h1>
         <input
           id="monthFilter"
           type="month"
-          class="px-2 py-1 bg-white rounded-xl border border-pastel text-xs text-ink outline-none appearance-none"
+          class="px-2 py-1 bg-white/50 rounded-xl border border-white text-xs text-ink outline-none appearance-none"
         />
       </div>
 
-      <div class="flex justify-between items-center bg-milk2 rounded-xl p-3 mb-4">
+      <div class="flex justify-between items-center bg-white/40 rounded-2xl p-3 mb-4 border border-white/30">
         <div class="text-center w-1/3">
           <p class="text-[10px] text-slate-500 mb-1">收入</p>
           <p id="sumIncome" class="text-sm font-semibold text-green-500">$0</p>
         </div>
-        <div class="text-center w-1/3 border-l border-r border-white">
+        <div class="text-center w-1/3 border-l border-r border-white/60">
           <p class="text-[10px] text-slate-500 mb-1">支出</p>
           <p id="sumExpense" class="text-sm font-semibold text-red-400">$0</p>
         </div>
@@ -104,7 +109,7 @@
         </div>
       </div>
 
-      <div class="bg-milk2 border border-pastel rounded-xl p-4 flex justify-between items-center">
+      <div class="bg-berry/5 border border-white/40 rounded-2xl p-4 flex justify-between items-center">
         <div class="flex flex-col">
           <span class="text-xs text-slate-500">本月可用現金</span>
           <span class="text-[9px] text-slate-400">餘額已扣除支出與儲蓄</span>
@@ -113,38 +118,38 @@
       </div>
     </section>
 
-    <section class="bg-white rounded-2xl border border-pastel p-4 flex-grow flex flex-col overflow-hidden">
-      <div class="flex justify-between items-center mb-3">
+    <section class="glass rounded-3xl p-4 flex-grow flex flex-col overflow-hidden shadow-glass">
+      <div class="flex justify-between items-center mb-3 px-1">
         <h2 class="text-sm font-semibold text-ink">📋 本月明細清單</h2>
         <span id="recordCount" class="text-xs text-slate-400"></span>
       </div>
 
-      <div id="mobileList" class="space-y-2 overflow-y-auto hide-scrollbar scroll-area pb-20">
+      <div id="mobileList" class="space-y-2 overflow-y-auto hide-scrollbar scroll-area pb-24">
       </div>
       <p id="emptyHint" class="text-xs text-slate-400 mt-10 hidden text-center">目前沒有紀錄。</p>
     </section>
 
   </div>
 
-  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-white/95 backdrop-blur-md border-t border-pastel rounded-t-3xl pb-6 pt-2 px-10 flex justify-between z-40 shadow-[0_-10px_30px_rgba(255,108,159,0.06)]">
-    <button id="navChart" class="flex flex-col items-center p-2 rounded-xl text-slate-400 transition-colors">
+  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-white/70 backdrop-blur-xl border-t border-white/40 rounded-t-3xl pb-8 pt-2 px-10 flex justify-between z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
+    <button id="navChart" class="flex flex-col items-center p-2 rounded-2xl transition-colors">
       <span class="text-2xl">🍪</span>
     </button>
-    <button id="navAdd" class="flex flex-col items-center p-2 rounded-xl text-slate-400 transition-colors">
+    <button id="navAdd" class="flex flex-col items-center p-2 rounded-2xl transition-colors">
       <span class="text-2xl">✏️</span>
     </button>
-    <button id="navNotes" class="flex flex-col items-center p-2 rounded-xl text-slate-400 transition-colors">
+    <button id="navNotes" class="flex flex-col items-center p-2 rounded-2xl transition-colors">
       <span class="text-2xl">📒</span>
     </button>
-    <button id="navCalc" class="flex flex-col items-center p-2 rounded-xl text-slate-400 transition-colors">
+    <button id="navCalc" class="flex flex-col items-center p-2 rounded-2xl transition-colors">
       <span class="text-2xl">🐥</span>
     </button>
   </nav>
 
-  <div id="chartModal" class="fixed inset-0 bg-black/20 z-50 hidden flex-col justify-end backdrop-blur-sm">
-    <div class="bg-white w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-[0_-8px_20px_rgba(255,108,159,0.15)] slide-up-drawer">
+  <div id="chartModal" class="fixed inset-0 bg-black/10 z-50 hidden flex-col justify-end backdrop-blur-sm">
+    <div class="glass w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-2xl slide-up-drawer">
       <div class="flex justify-between items-center mb-6">
-        <h3 class="text-ink font-bold">📊支出分類統計</h3>
+        <h3 class="text-ink font-bold">📊 支出分類統計</h3>
         <button id="closeChartBtn" class="text-slate-400 text-2xl">&times;</button>
       </div>
       <div class="h-[250px] flex items-center justify-center">
@@ -153,85 +158,84 @@
     </div>
   </div>
 
-  <div id="notesModal" class="fixed inset-0 bg-black/20 z-50 hidden flex-col justify-end backdrop-blur-sm">
-    <div class="bg-white w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-[0_-8px_20px_rgba(255,108,159,0.15)] slide-up-drawer">
-      <div class="flex justify-between items-center mb-4 border-b border-pastel pb-3">
+  <div id="notesModal" class="fixed inset-0 bg-black/10 z-50 hidden flex-col justify-end backdrop-blur-sm">
+    <div class="glass w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-2xl slide-up-drawer">
+      <div class="flex justify-between items-center mb-4">
         <h3 class="text-berry font-bold">☁️ 待繳清單</h3>
         <button id="closeNotesBtn" class="text-slate-400 text-2xl">&times;</button>
       </div>
-      <div id="billList" class="max-h-[50vh] overflow-y-auto hide-scrollbar space-y-2"></div>
-      <button id="addBillBtn" class="w-full mt-4 py-3 border border-dashed border-berry text-berry rounded-xl text-xs font-medium">＋ 新增待繳項目</button>
+      
+      <div class="flex gap-2 mb-5">
+          <input id="noteQuickInput" type="text" class="flex-1 bg-white/50 border border-white/80 rounded-xl px-4 py-3 text-[16px] outline-none focus:bg-white transition-all" placeholder="寫下項目... (例如：房租 15000)" />
+          <button id="quickAddBillBtn" class="bg-berry text-white px-4 rounded-xl text-xl shadow-float">+</button>
+      </div>
+
+      <div id="billList" class="max-h-[45vh] overflow-y-auto hide-scrollbar space-y-2"></div>
     </div>
   </div>
 
-  <div id="addEntryModal" class="fixed inset-0 bg-black/20 z-50 hidden flex-col justify-end backdrop-blur-sm">
-    <div class="bg-white w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-[0_-8px_20px_rgba(255,108,159,0.15)] slide-up-drawer">
+  <div id="addEntryModal" class="fixed inset-0 bg-black/10 z-50 hidden flex-col justify-end backdrop-blur-sm">
+    <div class="glass w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-2xl slide-up-drawer">
       <div class="flex justify-between items-center mb-5">
         <h3 class="text-berry font-bold">🍓 新增記錄</h3>
         <button id="closeAddEntryBtn" class="text-slate-400 text-2xl">&times;</button>
       </div>
       <div class="grid grid-cols-3 gap-3 mb-5">
-        <button id="btnIncome" class="py-2.5 rounded-xl bg-milk2 text-sm transition-colors">💗 收入</button>
-        <button id="btnExpense" class="py-2.5 rounded-xl bg-milk2 text-sm transition-colors">🧾 支出</button>
-        <button id="btnSaving" class="py-2.5 rounded-xl bg-milk2 text-sm transition-colors">🐷 儲蓄</button>
+        <button id="btnIncome" class="py-2.5 rounded-xl bg-white/40 text-sm transition-colors border border-white/60">💗 收入</button>
+        <button id="btnExpense" class="py-2.5 rounded-xl bg-white/40 text-sm transition-colors border border-white/60">🧾 支出</button>
+        <button id="btnSaving" class="py-2.5 rounded-xl bg-white/40 text-sm transition-colors border border-white/60">🐷 儲蓄</button>
       </div>
       <form id="entryForm" class="space-y-5 hidden">
-        
         <div class="flex flex-col gap-3">
-            <input id="amountInput" type="number" inputmode="numeric" class="box-border w-full bg-milk2/30 px-4 py-3 rounded-xl border border-slate-200 text-[16px] outline-none focus:border-berry focus:bg-white transition-colors" placeholder="金額" />
-            
-            <input id="dateInput" type="date" class="box-border w-full bg-milk2/30 px-4 py-3 rounded-xl border border-slate-200 text-[16px] outline-none focus:border-berry focus:bg-white transition-colors appearance-none" />
+            <input id="amountInput" type="number" inputmode="numeric" class="box-border w-full bg-white/50 px-4 py-3 rounded-xl border border-white/80 text-[16px] outline-none focus:bg-white transition-all" placeholder="金額" />
+            <input id="dateInput" type="date" class="box-border w-full bg-white/50 px-4 py-3 rounded-xl border border-white/80 text-[16px] outline-none focus:bg-white transition-all appearance-none" />
         </div>
-        
         <div id="expenseCategoryBlock" class="hidden space-y-3">
             <div id="mainCategoryButtons" class="grid grid-cols-4 gap-2 text-xs"></div>
-            <div id="subCategoryButtons" class="grid grid-cols-4 gap-2 text-xs hidden pt-3 border-t border-pastel"></div>
+            <div id="subCategoryButtons" class="grid grid-cols-4 gap-2 text-xs hidden pt-3 border-t border-white/40"></div>
         </div>
-        
-        <input id="noteInput" type="text" class="box-border w-full bg-milk2/30 px-4 py-3 rounded-xl border border-slate-200 text-[16px] outline-none focus:border-berry focus:bg-white transition-colors" placeholder="備註 (可留白)" />
-        <button type="submit" class="w-full py-3 bg-berry text-white rounded-xl text-sm shadow-sm hover:opacity-90">＋ 加入紀錄</button>
-        <p id="formError" class="text-xs text-red-500 hidden"></p>
+        <input id="noteInput" type="text" class="box-border w-full bg-white/50 px-4 py-3 rounded-xl border border-white/80 text-[16px] outline-none focus:bg-white transition-all" placeholder="備註 (可留白)" />
+        <button type="submit" class="w-full py-3.5 bg-berry text-white rounded-2xl text-sm shadow-float font-medium">＋ 加入紀錄</button>
       </form>
     </div>
   </div>
 
-  <div id="calcModal" class="fixed inset-0 bg-black/20 z-50 hidden flex-col justify-end backdrop-blur-sm">
-    <div class="bg-white w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-[0_-8px_20px_rgba(255,108,159,0.15)] slide-up-drawer">
+  <div id="calcModal" class="fixed inset-0 bg-black/10 z-50 hidden flex-col justify-end backdrop-blur-sm">
+    <div class="glass w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-2xl slide-up-drawer">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-bold text-ink">🌸 小計算機</h3>
         <button id="closeCalcBtn" class="text-slate-400 text-2xl">&times;</button>
       </div>
-      <div class="bg-milk2 rounded-2xl p-4 mb-5 text-right">
+      <div class="bg-white/40 rounded-2xl p-4 mb-5 text-right border border-white/60">
         <div id="calcHistory" class="text-xs text-slate-400 min-h-[16px] mb-1"></div>
         <div id="calcDisplay" class="text-3xl font-bold text-ink truncate">0</div>
       </div>
       <div class="grid grid-cols-4 gap-3" id="calcKeypad">
-        <button class="bg-slate-100 text-ink py-4 rounded-2xl text-lg" data-val="C">C</button>
-        <button class="bg-slate-100 text-ink py-4 rounded-2xl text-lg" data-val="DEL">⌫</button>
-        <button class="bg-slate-100 text-ink py-4 rounded-2xl text-lg" data-val="%">%</button>
-        <button class="bg-blush text-white py-4 rounded-2xl text-lg" data-val="/">÷</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="7">7</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="8">8</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="9">9</button>
-        <button class="bg-blush text-white py-4 rounded-2xl text-lg" data-val="*">×</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="4">4</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="5">5</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="6">6</button>
-        <button class="bg-blush text-white py-4 rounded-2xl text-lg" data-val="-">-</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="1">1</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="2">2</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="3">3</button>
-        <button class="bg-blush text-white py-4 rounded-2xl text-lg" data-val="+">+</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm col-span-2" data-val="0">0</button>
-        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val=".">.</button>
-        <button class="bg-berry text-white py-4 rounded-2xl text-lg shadow-sm" data-val="=">=</button>
+        <button class="bg-white/40 text-ink py-4 rounded-2xl text-lg border border-white" data-val="C">C</button>
+        <button class="bg-white/40 text-ink py-4 rounded-2xl text-lg border border-white" data-val="DEL">⌫</button>
+        <button class="bg-white/40 text-ink py-4 rounded-2xl text-lg border border-white" data-val="%">%</button>
+        <button class="bg-blush text-white py-4 rounded-2xl text-lg shadow-sm" data-val="/">÷</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val="7">7</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val="8">8</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val="9">9</button>
+        <button class="bg-blush text-white py-4 rounded-2xl text-lg shadow-sm" data-val="*">×</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val="4">4</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val="5">5</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val="6">6</button>
+        <button class="bg-blush text-white py-4 rounded-2xl text-lg shadow-sm" data-val="-">-</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val="1">1</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val="2">2</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val="3">3</button>
+        <button class="bg-blush text-white py-4 rounded-2xl text-lg shadow-sm" data-val="+">+</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm col-span-2" data-val="0">0</button>
+        <button class="bg-white/80 text-ink py-4 rounded-2xl text-lg shadow-sm" data-val=".">.</button>
+        <button class="bg-berry text-white py-4 rounded-2xl text-lg shadow-float" data-val="=">=</button>
       </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // 記得內容不要變唷！這裡是修改子分類的地方
     const categoryData = {
       "🍱 飲食": ["早餐", "午餐", "晚餐", "點心", "宵夜", "小吃", "飲料", "其他"],
       "🚗 交通": ["大眾運輸", "加油", "Uber／計程車", "停車費", "其他"],
@@ -263,10 +267,8 @@
     async function init() {
       const t = new Date(); 
       const currentMonth = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}`;
-      
       monthFilter.value = currentMonth;
       monthFilter.max = currentMonth;
-      
       document.getElementById("dateInput").value = `${currentMonth}-${String(t.getDate()).padStart(2,"0")}`;
       
       const rawEntries = localStorage.getItem(STORAGE_KEY); 
@@ -276,7 +278,6 @@
       
       render(); 
       renderFixedBills();
-      
       loadDataFromSheet();
     }
 
@@ -287,9 +288,7 @@
         if (result.status === 'success') {
           entries = result.data.map(e => {
             let cleanDate = e.date || '';
-            if (cleanDate.includes('T')) {
-                cleanDate = cleanDate.split('T')[0];
-            }
+            if (cleanDate.includes('T')) cleanDate = cleanDate.split('T')[0];
             return {...e, amount: parseFloat(e.amount), date: cleanDate};
           });
           localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
@@ -301,34 +300,29 @@
     function render() {
       const list = entries.filter(e => e.date && e.date.startsWith(monthFilter.value)).sort((a,b) => b.date.localeCompare(a.date));
       let inc=0, exp=0, sav=0;
-      
       list.forEach(e => { 
         if(e.type==='income') inc+=e.amount; 
         if(e.type==='expense') exp+=e.amount; 
         if(e.type==='saving') sav+=e.amount; 
       });
-      
       sumIncome.textContent = "$"+inc.toLocaleString(); 
       sumExpense.textContent = "$"+exp.toLocaleString(); 
       sumSaving.textContent = "$"+sav.toLocaleString();
       sumBalance.textContent = "$"+(inc - exp - sav).toLocaleString();
       document.getElementById("recordCount").textContent = `共 ${list.length} 筆`;
-      
       mobileList.innerHTML = "";
       document.getElementById("emptyHint").classList.toggle("hidden", list.length > 0);
-      
       list.forEach(e => {
         const card = document.createElement("div"); 
-        card.className = "bg-white border border-pastel rounded-xl p-3 text-sm shadow-sm";
+        card.className = "bg-white/60 border border-white/50 rounded-2xl p-3 text-sm shadow-sm backdrop-blur-sm";
         const badge = e.type==='income' ? 'bg-green-50 text-green-500' : (e.type==='saving' ? 'bg-blue-50 text-blue-500' : 'bg-pink-50 text-berry');
         const typeLabel = e.type==='income' ? '收入' : (e.type==='saving' ? '儲蓄' : '支出');
         const catText = e.mainCategory ? `${e.mainCategory} ${e.subCategory || ''}` : '';
-        
         card.innerHTML = `
           <div class="flex justify-between items-start">
             <div>
-              <span class="px-2 py-0.5 rounded-md text-[10px] ${badge}">${typeLabel}</span> 
-              <span class="font-medium text-ink">${catText}</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] ${badge} border border-white/50">${typeLabel}</span> 
+              <span class="font-medium text-ink ml-1">${catText}</span>
               <p class="text-[10px] text-slate-400 mt-1">${e.date} ${e.note ? '· '+e.note : ''}</p>
             </div>
             <div class="text-right">
@@ -344,15 +338,11 @@
     function setActiveNav(navId) {
       ['navChart', 'navAdd', 'navNotes', 'navCalc'].forEach(id => {
           const btn = document.getElementById(id);
-          if(btn) {
-              btn.classList.remove('bg-milk2');
-          }
+          if(btn) btn.classList.remove('bg-berry/10', 'border-berry/20');
       });
       if(navId) {
           const btn = document.getElementById(navId);
-          if(btn) {
-              btn.classList.add('bg-milk2');
-          }
+          if(btn) btn.classList.add('bg-berry/10', 'border-berry/20');
       }
     }
 
@@ -373,84 +363,48 @@
       document.getElementById("amountInput").value = "";
       document.getElementById("noteInput").value = "";
       document.getElementById("expenseCategoryBlock").classList.add("hidden");
-      
       ['btnIncome', 'btnExpense', 'btnSaving'].forEach(id => {
-        document.getElementById(id).classList.replace('bg-blush', 'bg-milk2');
+        document.getElementById(id).classList.replace('bg-blush', 'bg-white/40');
         document.getElementById(id).classList.replace('text-white', 'text-ink');
       });
-      
       selectedType = null;
-      selectedMainCategory = null;
-      selectedSubCategory = null;
     }
 
     document.getElementById("navChart").onclick = () => toggle("chartModal", true, "navChart");
     document.getElementById("closeChartBtn").onclick = () => toggle("chartModal", false);
-    
     document.getElementById("navNotes").onclick = () => toggle("notesModal", true, "navNotes");
     document.getElementById("closeNotesBtn").onclick = () => toggle("notesModal", false);
-    
-    document.getElementById("navAdd").onclick = () => {
-        toggle("addEntryModal", true, "navAdd");
-        setupForm('expense');
-    };
-    document.getElementById("closeAddEntryBtn").onclick = () => {
-        toggle("addEntryModal", false);
-        resetForm();
-    };
-    
+    document.getElementById("navAdd").onclick = () => { toggle("addEntryModal", true, "navAdd"); setupForm('expense'); };
+    document.getElementById("closeAddEntryBtn").onclick = () => { toggle("addEntryModal", false); resetForm(); };
     document.getElementById("navCalc").onclick = () => toggle("calcModal", true, "navCalc");
     document.getElementById("closeCalcBtn").onclick = () => toggle("calcModal", false);
-
-    document.getElementById("btnIncome").onclick = () => setupForm('income');
-    document.getElementById("btnExpense").onclick = () => setupForm('expense');
-    document.getElementById("btnSaving").onclick = () => setupForm('saving');
 
     function setupForm(type) {
       selectedType = type; 
       document.getElementById("entryForm").classList.remove("hidden");
       document.getElementById("expenseCategoryBlock").classList.toggle("hidden", type !== 'expense');
-      
       ['btnIncome', 'btnExpense', 'btnSaving'].forEach(id => {
-        document.getElementById(id).classList.replace('bg-blush', 'bg-milk2');
-        document.getElementById(id).classList.replace('text-white', 'text-ink');
+        document.getElementById(id).classList.remove('bg-blush', 'text-white');
+        document.getElementById(id).classList.add('bg-white/40', 'text-ink');
       });
-      
       const activeBtn = type === 'income' ? 'btnIncome' : (type === 'expense' ? 'btnExpense' : 'btnSaving');
-      document.getElementById(activeBtn).classList.replace('bg-milk2', 'bg-blush');
-      document.getElementById(activeBtn).classList.replace('text-ink', 'text-white');
-
+      document.getElementById(activeBtn).classList.replace('bg-white/40', 'bg-blush');
+      document.getElementById(activeBtn).classList.add('text-white');
       if(type === 'expense') renderCategories();
-      else {
-          selectedMainCategory = null;
-          selectedSubCategory = null;
-      }
     }
 
     function renderCategories() {
       const box = document.getElementById("mainCategoryButtons"); 
       const subBox = document.getElementById("subCategoryButtons");
-      box.innerHTML = ""; 
-      subBox.innerHTML = ""; 
-      subBox.classList.add("hidden");
-
+      box.innerHTML = ""; subBox.innerHTML = ""; subBox.classList.add("hidden");
       Object.keys(categoryData).forEach(cat => {
         const btn = document.createElement("button"); 
-        btn.className = "py-2 px-1 bg-milk2 text-ink rounded-lg text-[11px] transition-colors truncate"; 
+        btn.className = "py-2 px-1 bg-white/40 text-ink rounded-xl text-[11px] transition-colors truncate border border-white/60"; 
         btn.textContent = cat;
-        
         btn.onclick = (ev) => { 
-          ev.preventDefault(); 
-          selectedMainCategory = cat; 
-          selectedSubCategory = categoryData[cat][0]; 
-          
-          Array.from(box.children).forEach(b => {
-             b.classList.replace("bg-blush", "bg-milk2");
-             b.classList.replace("text-white", "text-ink");
-          });
-          btn.classList.replace("bg-milk2", "bg-blush");
-          btn.classList.replace("text-ink", "text-white");
-
+          ev.preventDefault(); selectedMainCategory = cat; selectedSubCategory = categoryData[cat][0]; 
+          Array.from(box.children).forEach(b => { b.classList.remove("bg-blush", "text-white"); b.classList.add("bg-white/40", "text-ink"); });
+          btn.classList.replace("bg-white/40", "bg-blush"); btn.classList.add("text-white");
           renderSubCategories(cat);
         };
         box.appendChild(btn);
@@ -459,29 +413,15 @@
 
     function renderSubCategories(mainCat) {
       const subBox = document.getElementById("subCategoryButtons");
-      subBox.innerHTML = ""; 
-      subBox.classList.remove("hidden");
-
+      subBox.innerHTML = ""; subBox.classList.remove("hidden");
       categoryData[mainCat].forEach(sub => {
         const btn = document.createElement("button");
-        btn.className = "py-2 px-1 bg-milk2 text-ink rounded-lg text-[11px] transition-colors truncate";
+        btn.className = "py-2 px-1 bg-white/40 text-ink rounded-xl text-[11px] transition-colors truncate border border-white/60";
         btn.textContent = sub;
-        
-        if(sub === selectedSubCategory) {
-           btn.classList.replace("bg-milk2", "bg-blush");
-           btn.classList.replace("text-ink", "text-white");
-        }
-
         btn.onclick = (ev) => {
-          ev.preventDefault();
-          selectedSubCategory = sub;
-          
-          Array.from(subBox.children).forEach(b => {
-              b.classList.replace("bg-blush", "bg-milk2");
-              b.classList.replace("text-white", "text-ink");
-          });
-          btn.classList.replace("bg-milk2", "bg-blush");
-          btn.classList.replace("text-ink", "text-white");
+          ev.preventDefault(); selectedSubCategory = sub;
+          Array.from(subBox.children).forEach(b => { b.classList.remove("bg-blush", "text-white"); b.classList.add("bg-white/40", "text-ink"); });
+          btn.classList.replace("bg-white/40", "bg-blush"); btn.classList.add("text-white");
         };
         subBox.appendChild(btn);
       });
@@ -489,189 +429,78 @@
 
     document.getElementById("entryForm").onsubmit = async (e) => {
       e.preventDefault(); 
-      const amtInput = document.getElementById("amountInput");
-      const noteInput = document.getElementById("noteInput");
-      const amt = Number(amtInput.value);
-      
+      const amt = Number(document.getElementById("amountInput").value);
       if (!amt || !selectedType) return;
-      if (selectedType === 'expense' && (!selectedMainCategory || !selectedSubCategory)) {
-          alert('請選擇完整的支出分類喔');
-          return;
-      }
-
-      const entry = { 
-        id: Date.now().toString(), 
-        type: selectedType, 
-        amount: amt, 
-        date: document.getElementById("dateInput").value, 
-        note: noteInput.value, 
-        mainCategory: selectedType === 'expense' ? selectedMainCategory : null, 
-        subCategory: selectedType === 'expense' ? selectedSubCategory : null 
-      };
-      
-      entries.push(entry); 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
-      render(); 
-      toggle("addEntryModal", false);
-      
-      resetForm();
-
-      try {
-          await fetch(SCRIPT_URL, { 
-              method: 'POST', 
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify(entry)
-          });
-      } catch(err) {}
+      const entry = { id: Date.now().toString(), type: selectedType, amount: amt, date: document.getElementById("dateInput").value, note: document.getElementById("noteInput").value, mainCategory: selectedType === 'expense' ? selectedMainCategory : null, subCategory: selectedType === 'expense' ? selectedSubCategory : null };
+      entries.push(entry); localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
+      render(); toggle("addEntryModal", false); resetForm();
+      try { await fetch(SCRIPT_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(entry) }); } catch(err) {}
     };
 
     window.deleteEntry = async (id) => {
       if(!confirm("確定要刪除這筆紀錄嗎？")) return;
-      entries = entries.filter(e => e.id !== id); 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
-      render();
-      try {
-          await fetch(SCRIPT_URL, { 
-              method: 'POST', 
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify({ action: 'DELETE', id: id })
-          });
-      } catch(err) {}
+      entries = entries.filter(e => e.id !== id); localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); render();
+      try { await fetch(SCRIPT_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: 'DELETE', id: id }) }); } catch(err) {}
     };
 
+    // 筆記本待繳清單邏輯：一鍵新增
     function renderFixedBills() {
       billListEl.innerHTML = "";
-
       if (fixedBills.length === 0) {
-        billListEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">目前沒有待繳項目</p>`;
+        billListEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">目前沒有待繳項目，寫下一筆吧 ✨</p>`;
         return;
       }
-
-      const sortedBills = [...fixedBills].sort((a, b) => {
-          if(!a.dueDate) return 1;
-          if(!b.dueDate) return -1;
-          return a.dueDate.localeCompare(b.dueDate);
-      });
-
-      sortedBills.forEach((b) => {
-        const originalIndex = fixedBills.indexOf(b);
+      fixedBills.forEach((b, i) => {
         const div = document.createElement("div");
-        div.className = "flex items-center justify-between gap-2 py-3 border-b border-pastel text-sm";
-
+        div.className = "flex items-center justify-between gap-2 py-3 border-b border-white/30 text-sm";
         div.innerHTML = `
           <div class="flex items-center gap-3">
-            <input type="checkbox" class="custom-checkbox" 
-              ${b.done ? "checked" : ""} 
-              onchange="checkBill(${originalIndex})" />
-            <div class="flex flex-col">
-              <span class="${b.done ? "bill-done text-slate-400" : "text-ink font-medium"}">
-                ${b.name} ${b.amount ? "- $" + Number(b.amount).toLocaleString() : ""}
-              </span>
-              ${b.dueDate ? `<span class="text-[10px] text-slate-400 mt-0.5">預計繳款：${b.dueDate}</span>` : ""}
-            </div>
+            <input type="checkbox" class="custom-checkbox" ${b.done ? "checked" : ""} onchange="checkBill(${i})" />
+            <span class="${b.done ? "bill-done text-slate-400" : "text-ink font-medium"}">${b.name}</span>
           </div>
-          <button onclick="deleteBill(${originalIndex})" class="text-[10px] text-red-300">刪除</button>
+          <button onclick="deleteBill(${i})" class="text-[10px] text-red-300 px-2">刪除</button>
         `;
-
         billListEl.appendChild(div);
       });
     }
 
-    window.checkBill = function(index) {
-      fixedBills[index].done = !fixedBills[index].done;
+    document.getElementById("quickAddBillBtn").onclick = () => {
+      const input = document.getElementById("noteQuickInput");
+      if (!input.value) return;
+      fixedBills.push({ name: input.value, done: false });
       localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills));
-      renderFixedBills();
-    }
-
-    window.deleteBill = function(index) {
-      if (!confirm("確定刪除這筆待繳項目？")) return;
-      fixedBills.splice(index, 1);
-      localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills));
-      renderFixedBills();
-    }
-
-    document.getElementById("addBillBtn").onclick = () => {
-      const name = prompt("請輸入項目名稱");
-      if (!name) return;
-
-      const amount = prompt("金額（可留空）");
-      const dueDate = prompt("預計繳款日期？（例如 15號 或 2026-03-15，可留空）");
-
-      fixedBills.push({
-        name,
-        amount: amount || "",
-        dueDate: dueDate || "",
-        done: false
-      });
-
-      localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills));
+      input.value = "";
       renderFixedBills();
     };
+
+    window.checkBill = (i) => { fixedBills[i].done = !fixedBills[i].done; localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills)); renderFixedBills(); };
+    window.deleteBill = (i) => { if (confirm("確定刪除？")) { fixedBills.splice(i, 1); localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills)); renderFixedBills(); } };
 
     function renderPieChart(list) {
       const ctx = document.getElementById("expensePieChart");
       const data = {}; 
-      list.filter(e => e.type==='expense').forEach(e => {
-          if(e.mainCategory) data[e.mainCategory] = (data[e.mainCategory]||0) + e.amount;
-      });
-      
-      if(pieChart) {
-          pieChart.destroy();
-      }
-      
-      pieChart = new Chart(ctx, { 
-          type:'pie', 
-          data: { 
-              labels:Object.keys(data), 
-              datasets:[{
-                  data:Object.values(data), 
-                  backgroundColor: chartColors.slice(0, Object.keys(data).length)
-              }] 
-          }, 
-          options: {
-              plugins: {
-                  legend: { position:'bottom', labels: { font:{size:10}, color: '#2b2b3c' } }
-              }
-          }
-      });
+      list.filter(e => e.type==='expense').forEach(e => { if(e.mainCategory) data[e.mainCategory] = (data[e.mainCategory]||0) + e.amount; });
+      if(pieChart) pieChart.destroy();
+      pieChart = new Chart(ctx, { type:'pie', data: { labels:Object.keys(data), datasets:[{ data:Object.values(data), backgroundColor: chartColors }] }, options: { plugins: { legend: { position:'bottom', labels: { font:{size:10}, color: '#2b2b3c' } } } } });
     }
 
     function safeCalculate(expression) {
         let str = expression.replace(/×/g, '*').replace(/÷/g, '/');
         if (/[^0-9+\-*/.]/.test(str)) return 'Error';
-        
-        try { 
-            const result = new Function('return ' + str)(); 
-            if (!isFinite(result) || isNaN(result)) return 'Error';
-            return String(result);
-        } catch(e) { 
-            return 'Error'; 
-        }
+        try { const result = new Function('return ' + str)(); return (!isFinite(result) || isNaN(result)) ? 'Error' : String(result); } catch(e) { return 'Error'; }
     }
 
     let calcVal = '0';
     document.getElementById("calcKeypad").onclick = (e) => {
-      const v = e.target.dataset.val; 
-      if(!v) return;
-      
-      if(v === 'C') {
-          calcVal = '0';
-      } else if (v === 'DEL') {
-          calcVal = calcVal.length > 1 ? calcVal.slice(0, -1) : '0';
-      } else if(v === '=') {
-          calcVal = safeCalculate(calcVal);
-      } else {
-          if (calcVal === '0' && !['+', '-', '*', '/'].includes(v)) {
-              calcVal = v;
-          } else {
-              calcVal += v;
-          }
-      }
+      const v = e.target.dataset.val; if(!v) return;
+      if(v === 'C') calcVal = '0';
+      else if (v === 'DEL') calcVal = calcVal.length > 1 ? calcVal.slice(0, -1) : '0';
+      else if(v === '=') calcVal = safeCalculate(calcVal);
+      else calcVal = (calcVal === '0' && !['+', '-', '*', '/'].includes(v)) ? v : calcVal + v;
       document.getElementById("calcDisplay").textContent = calcVal;
     };
 
     monthFilter.onchange = render;
-    
     init();
   </script>
 </body>
