@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
   <title>bowbow記帳本</title>
 
@@ -83,7 +83,7 @@
         <input
           id="monthFilter"
           type="month"
-          class="px-2 py-1 rounded-xl border border-pastel text-xs bg-milk2 text-ink outline-none"
+          class="px-2 py-1 bg-white rounded-xl border border-pastel text-xs text-ink outline-none appearance-none"
         />
       </div>
 
@@ -168,8 +168,9 @@
       <form id="entryForm" class="space-y-4 hidden">
         
         <div class="flex gap-2">
-            <input id="amountInput" type="number" inputmode="numeric" class="box-border w-1/2 px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" placeholder="金額" />
-            <input id="dateInput" type="date" class="box-border w-1/2 px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" />
+            <input id="amountInput" type="number" inputmode="numeric" class="box-border flex-1 bg-white px-3 py-2 rounded-xl border border-slate-300 text-[16px] outline-none focus:border-berry" placeholder="金額" />
+            
+            <input id="dateInput" type="date" class="box-border w-[135px] bg-white px-2 py-2 rounded-xl border border-slate-300 text-[16px] outline-none focus:border-berry appearance-none" />
         </div>
         
         <div id="expenseCategoryBlock" class="hidden space-y-2">
@@ -177,7 +178,7 @@
             <div id="subCategoryButtons" class="grid grid-cols-3 gap-2 text-xs hidden pt-2 border-t border-pastel"></div>
         </div>
         
-        <input id="noteInput" type="text" class="box-border w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" placeholder="備註 (可留白)" />
+        <input id="noteInput" type="text" class="box-border w-full bg-white px-3 py-2 rounded-xl border border-slate-300 text-[16px] outline-none focus:border-berry" placeholder="備註 (可留白)" />
         <button type="submit" class="w-full py-2.5 bg-berry text-white rounded-xl text-sm shadow-sm">＋ 加入紀錄</button>
         <p id="formError" class="text-xs text-red-500 hidden"></p>
       </form>
@@ -220,7 +221,21 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const categoryData = {"🍱 飲食":["早餐","午餐","晚餐","點心","宵夜","小吃","飲料","其他"],"🚗 交通":["大眾運輸","加油","Uber／計程車","停車費","其他"],"🛒 生活":["個人用品","家用清潔用品","衛生用品","文具小物","五金工具","其他"],"🛍️ 購物":["衣服","鞋子","配件","美妝","保養品","居家小物","其他"],"💳 帳單":["卡費","手機費","健保費","房租","電費","水費","網路","其他"],"🐱 貓咪":["罐頭","乾乾","零食","貓砂","玩具","預防針／醫療","用品","其他"],"💖 美容":["美甲","美睫","臉部保養","頭髮","其他"],"🎮 娛樂":["電影","KTV","遊戲","聚會","閱讀／學習","其他"],"🏥 醫療":["看診","藥品","健康檢查","其他醫療"],"✈️ 旅遊":["住宿","交通","門票","伴手禮","其他"],"🎀 其他":["臨時開銷","小額花費","其他"]};
+    // 這裡就是修改子分類的地方喔！你可以依照自己的習慣自由增減中括號裡的項目。
+    const categoryData = {
+      "🍱 飲食": ["早餐", "午餐", "晚餐", "點心", "宵夜", "小吃", "飲料", "其他"],
+      "🚗 交通": ["大眾運輸", "加油", "Uber／計程車", "停車費", "其他"],
+      "🛒 生活": ["個人用品", "家庭用品", "生活用品", "文具小物", "五金工具", "其他"],
+      "🛍️ 購物": ["衣服", "鞋子", "配件", "美妝", "其他"],
+      "💳 帳單": ["卡費", "手機費", "健保費", "房租", "電費", "水費", "網路", "其他"],
+      "🐱 貓咪": ["罐頭", "乾乾", "零食", "貓砂", "玩具", "醫療", "用品", "其他"],
+      "💖 美容": ["美甲", "美睫", "保養", "美髮", "保養品", "其他"],
+      "🎮 娛樂": ["電影", "KTV", "遊戲", "聚會", "網咖", "其他"],
+      "🏥 醫療": ["看診", "藥品", "健康檢查", "其他醫療"],
+      "✈️ 旅遊": ["住宿", "交通", "門票", "伴手禮", "其他"],
+      "🎀 其他": ["臨時開銷", "小額花費", "收支平衡", "其他"]
+    };
+
     const STORAGE_KEY = "cute-book-entries-v2", FIXED_BILLS_KEY = "cute-fixed-bills-v3";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec';
 
@@ -575,7 +590,7 @@
       });
       
       if(pieChart) {
-          pieChart.destroy(); // 確實銷毀舊的圖表，讓新顏色可以順利套用
+          pieChart.destroy();
       }
       
       pieChart = new Chart(ctx, { 
