@@ -24,8 +24,6 @@
             blush: "#FFB7CE",
             pastel: "#FFE3ED",
             ink: "#2b2b3c",
-            success: "#10B981", 
-            danger: "#EF4444",  
           },
           boxShadow: {
             soft: "0 0 0 rgba(0,0,0,0)",
@@ -120,17 +118,17 @@
       </div>
 
       <div id="mobileList" class="space-y-2 overflow-y-auto hide-scrollbar scroll-area pb-4">
-        </div>
+      </div>
       <p id="emptyHint" class="text-xs text-slate-400 mt-10 hidden text-center">目前沒有紀錄。</p>
     </section>
 
   </div>
 
   <div class="fixed bottom-6 right-4 flex flex-col gap-3 z-40 items-center">
-    <button id="chartFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl">📊</button>
-    <button id="addEntryFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl">➕</button>
-    <button id="notesFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl">☁️</button>
-    <button id="calcFab" class="bg-berry text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl">🌸</button>
+    <button id="chartFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">📊</button>
+    <button id="addEntryFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">➕</button>
+    <button id="notesFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">☁️</button>
+    <button id="calcFab" class="bg-berry text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">🌸</button>
   </div>
 
   <div id="chartModal" class="fixed inset-0 bg-black/20 z-50 hidden items-center justify-center backdrop-blur-sm px-4">
@@ -223,14 +221,26 @@
     const STORAGE_KEY = "cute-book-entries-v2", FIXED_BILLS_KEY = "cute-fixed-bills-v3";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec';
 
+    // 擴充更豐富的溫柔粉彩色系
+    const chartColors = [
+      '#FFB7CE', '#FF6C9F', '#FFE3ED', '#FFD1DC', '#fbcfe8', 
+      '#f9a8d4', '#f472b6', '#fda4af', '#fb7185', '#e879f9', 
+      '#c084fc', '#a78bfa', '#818cf8', '#93c5fd', '#a7f3d0', 
+      '#bbf7d0', '#fef08a', '#fde047', '#fcd34d', '#fca5a5'
+    ];
+
     let entries = [], fixedBills = [], selectedType = null, selectedMainCategory = null, selectedSubCategory = null, pieChart = null;
 
     const sumIncome = document.getElementById("sumIncome"), sumSaving = document.getElementById("sumSaving"), sumExpense = document.getElementById("sumExpense"), sumBalance = document.getElementById("sumBalance"), monthFilter = document.getElementById("monthFilter"), mobileList = document.getElementById("mobileList"), billListEl = document.getElementById("billList");
 
     async function init() {
       const t = new Date(); 
-      monthFilter.value = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}`;
-      document.getElementById("dateInput").value = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;
+      const currentMonth = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}`;
+      
+      monthFilter.value = currentMonth;
+      monthFilter.max = currentMonth; // 防呆限制：不可選擇未來的月份
+      
+      document.getElementById("dateInput").value = `${currentMonth}-${String(t.getDate()).padStart(2,"0")}`;
       
       const rawEntries = localStorage.getItem(STORAGE_KEY); 
       entries = rawEntries ? JSON.parse(rawEntries) : [];
@@ -240,7 +250,6 @@
       render(); 
       renderFixedBills();
       
-      // 非同步背景更新資料
       loadDataFromSheet();
     }
 
@@ -299,7 +308,6 @@
       renderPieChart(list);
     }
 
-    // 重構的視窗開關邏輯
     const toggle = (id, show) => {
       const el = document.getElementById(id);
       if (show) {
@@ -329,7 +337,6 @@
       document.getElementById("entryForm").classList.remove("hidden");
       document.getElementById("expenseCategoryBlock").classList.toggle("hidden", type !== 'expense');
       
-      // 更新按鈕視覺狀態
       ['btnIncome', 'btnExpense', 'btnSaving'].forEach(id => {
         document.getElementById(id).classList.replace('bg-blush', 'bg-milk2');
         document.getElementById(id).classList.replace('text-white', 'text-ink');
@@ -433,7 +440,6 @@
       render(); 
       toggle("addEntryModal", false);
       
-      // 自動淨空表單
       amtInput.value = "";
       noteInput.value = "";
       document.getElementById("expenseCategoryBlock").classList.add("hidden");
@@ -444,7 +450,12 @@
       selectedType = null;
 
       try {
-          await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(entry), mode: 'no-cors' });
+          // 使用 text/plain 避免跨網域預檢請求被擋
+          await fetch(SCRIPT_URL, { 
+              method: 'POST', 
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(entry)
+          });
       } catch(err) {}
     };
 
@@ -454,7 +465,12 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
       render();
       try {
-          await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({action:'DELETE', id}), mode: 'no-cors' });
+          // 加上 action: 'DELETE' 供後端辨識
+          await fetch(SCRIPT_URL, { 
+              method: 'POST', 
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({ action: 'DELETE', id: id })
+          });
       } catch(err) {}
     };
 
@@ -466,7 +482,15 @@
         return;
       }
 
-      fixedBills.forEach((b, i) => {
+      // 依日期排序，沒有日期的放後面
+      const sortedBills = [...fixedBills].sort((a, b) => {
+          if(!a.dueDate) return 1;
+          if(!b.dueDate) return -1;
+          return a.dueDate.localeCompare(b.dueDate);
+      });
+
+      sortedBills.forEach((b) => {
+        const originalIndex = fixedBills.indexOf(b);
         const div = document.createElement("div");
         div.className = "flex items-center justify-between gap-2 py-2 border-b border-pastel text-sm";
 
@@ -474,12 +498,15 @@
           <div class="flex items-center gap-2">
             <input type="checkbox" class="custom-checkbox" 
               ${b.done ? "checked" : ""} 
-              onchange="checkBill(${i})" />
-            <span class="${b.done ? "bill-done text-slate-400" : "text-ink"}">
-              ${b.name} ${b.amount ? "- $" + Number(b.amount).toLocaleString() : ""}
-            </span>
+              onchange="checkBill(${originalIndex})" />
+            <div class="flex flex-col">
+              <span class="${b.done ? "bill-done text-slate-400" : "text-ink"}">
+                ${b.name} ${b.amount ? "- $" + Number(b.amount).toLocaleString() : ""}
+              </span>
+              ${b.dueDate ? `<span class="text-[10px] text-slate-400 mt-0.5">預計繳款：${b.dueDate}</span>` : ""}
+            </div>
           </div>
-          <button onclick="deleteBill(${i})" class="text-[10px] text-red-300">刪除</button>
+          <button onclick="deleteBill(${originalIndex})" class="text-[10px] text-red-300">刪除</button>
         `;
 
         billListEl.appendChild(div);
@@ -504,10 +531,12 @@
       if (!name) return;
 
       const amount = prompt("金額（可留空）");
+      const dueDate = prompt("預計繳款日期？（例如 15號 或 2026-03-15，可留空）");
 
       fixedBills.push({
         name,
         amount: amount || "",
+        dueDate: dueDate || "",
         done: false
       });
 
@@ -529,7 +558,8 @@
               labels:Object.keys(data), 
               datasets:[{
                   data:Object.values(data), 
-                  backgroundColor:['#FFB7CE','#FF6C9F','#FFE3ED','#FFD1DC', '#fbcfe8', '#f9a8d4', '#f472b6']
+                  // 載入更長的調色盤
+                  backgroundColor: chartColors.slice(0, Object.keys(data).length)
               }] 
           }, 
           options: {
@@ -540,29 +570,46 @@
       });
     }
 
+    // 安全的數學運算邏輯，取代 eval
+    function safeCalculate(expression) {
+        let str = expression.replace(/×/g, '*').replace(/÷/g, '/');
+        // 只允許數字與基礎運算符號通過，避免惡意代碼
+        if (/[^0-9+\-*/.]/.test(str)) return 'Error';
+        
+        try { 
+            const result = new Function('return ' + str)(); 
+            // 處理除以零或無效數字的情況
+            if (!isFinite(result) || isNaN(result)) return 'Error';
+            return String(result);
+        } catch(e) { 
+            return 'Error'; 
+        }
+    }
+
     let calcVal = '0';
     document.getElementById("calcKeypad").onclick = (e) => {
       const v = e.target.dataset.val; 
       if(!v) return;
+      
       if(v === 'C') {
           calcVal = '0';
       } else if (v === 'DEL') {
           calcVal = calcVal.length > 1 ? calcVal.slice(0, -1) : '0';
       } else if(v === '=') {
-          try { 
-              calcVal = eval(calcVal.replace(/×/g,'*').replace(/÷/g,'/')).toString(); 
-          } catch(e) { 
-              calcVal = 'Error'; 
-          }
+          calcVal = safeCalculate(calcVal);
       } else {
-          calcVal = calcVal === '0' ? v : calcVal + v;
+          // 避免開頭輸入錯誤的運算符
+          if (calcVal === '0' && !['+', '-', '*', '/'].includes(v)) {
+              calcVal = v;
+          } else {
+              calcVal += v;
+          }
       }
       document.getElementById("calcDisplay").textContent = calcVal;
     };
 
     monthFilter.onchange = render;
     
-    // 執行初始化
     init();
   </script>
 </body>
