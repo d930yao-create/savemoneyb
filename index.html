@@ -35,12 +35,13 @@
   </script>
 
   <style>
-    .slide {
-      animation: slideDown .25s ease-out;
+    /* 抽屜滑出的專屬動畫 */
+    .slide-up-drawer {
+      animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-4px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0.5; }
+      to   { transform: translateY(0); opacity: 1; }
     }
 
     button {
@@ -56,7 +57,7 @@
     }
 
     .scroll-area {
-      height: calc(100vh - 380px); 
+      height: calc(100vh - 340px); 
       min-height: 300px;
     }
 
@@ -74,7 +75,7 @@
   </style>
 </head>
 
-<body class="bg-milk text-ink h-screen overflow-hidden">
+<body class="bg-milk text-ink h-screen overflow-hidden relative">
   <div class="max-w-xl mx-auto px-4 py-6 h-full flex flex-col space-y-4">
 
     <section class="bg-white rounded-2xl border border-pastel p-5 flex-shrink-0">
@@ -117,23 +118,35 @@
         <span id="recordCount" class="text-xs text-slate-400"></span>
       </div>
 
-      <div id="mobileList" class="space-y-2 overflow-y-auto hide-scrollbar scroll-area pb-4">
+      <div id="mobileList" class="space-y-2 overflow-y-auto hide-scrollbar scroll-area pb-28">
       </div>
       <p id="emptyHint" class="text-xs text-slate-400 mt-10 hidden text-center">目前沒有紀錄。</p>
     </section>
 
   </div>
 
-  <div class="fixed bottom-6 right-4 flex flex-col gap-3 z-40 items-center">
-    <button id="chartFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">🍪</button>
-    <button id="addEntryFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">✏️</button>
-    <button id="notesFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">📒</button>
-    <button id="calcFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">🐥</button>
-  </div>
+  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-white/95 backdrop-blur-md border-t border-pastel rounded-t-3xl pb-8 pt-3 px-6 flex justify-between z-40 shadow-[0_-10px_30px_rgba(255,108,159,0.06)]">
+    <button id="navChart" class="flex flex-col items-center gap-1 p-2 w-16 rounded-2xl text-slate-400 transition-colors">
+      <span class="text-2xl">🍪</span>
+      <span class="text-[10px] font-medium tracking-wider">圖表</span>
+    </button>
+    <button id="navAdd" class="flex flex-col items-center gap-1 p-2 w-16 rounded-2xl text-slate-400 transition-colors">
+      <span class="text-2xl">✏️</span>
+      <span class="text-[10px] font-medium tracking-wider">記帳</span>
+    </button>
+    <button id="navNotes" class="flex flex-col items-center gap-1 p-2 w-16 rounded-2xl text-slate-400 transition-colors">
+      <span class="text-2xl">📒</span>
+      <span class="text-[10px] font-medium tracking-wider">待繳</span>
+    </button>
+    <button id="navCalc" class="flex flex-col items-center gap-1 p-2 w-16 rounded-2xl text-slate-400 transition-colors">
+      <span class="text-2xl">🐥</span>
+      <span class="text-[10px] font-medium tracking-wider">計算</span>
+    </button>
+  </nav>
 
-  <div id="chartModal" class="fixed inset-0 bg-black/20 z-50 hidden items-center justify-center backdrop-blur-sm px-4">
-    <div class="bg-white p-5 rounded-3xl shadow-xl w-full max-w-[320px] border border-pastel slide">
-      <div class="flex justify-between items-center mb-4">
+  <div id="chartModal" class="fixed inset-0 bg-black/20 z-50 hidden flex-col justify-end backdrop-blur-sm">
+    <div class="bg-white w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-[0_-8px_20px_rgba(255,108,159,0.15)] slide-up-drawer">
+      <div class="flex justify-between items-center mb-6">
         <h3 class="text-ink font-bold">📊支出分類統計</h3>
         <button id="closeChartBtn" class="text-slate-400 text-2xl">&times;</button>
       </div>
@@ -143,78 +156,78 @@
     </div>
   </div>
 
-  <div id="notesModal" class="fixed inset-0 bg-black/20 z-50 hidden items-center justify-center backdrop-blur-sm px-4">
-    <div class="bg-white p-5 rounded-3xl shadow-xl w-full max-w-[320px] border border-pastel slide">
-      <div class="flex justify-between items-center mb-4 border-b border-pastel pb-2">
+  <div id="notesModal" class="fixed inset-0 bg-black/20 z-50 hidden flex-col justify-end backdrop-blur-sm">
+    <div class="bg-white w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-[0_-8px_20px_rgba(255,108,159,0.15)] slide-up-drawer">
+      <div class="flex justify-between items-center mb-4 border-b border-pastel pb-3">
         <h3 class="text-berry font-bold">☁️ 待繳清單</h3>
         <button id="closeNotesBtn" class="text-slate-400 text-2xl">&times;</button>
       </div>
       <div id="billList" class="max-h-[50vh] overflow-y-auto hide-scrollbar space-y-2"></div>
-      <button id="addBillBtn" class="w-full mt-4 py-2 border border-dashed border-berry text-berry rounded-xl text-xs font-medium">＋ 新增待繳項目</button>
+      <button id="addBillBtn" class="w-full mt-4 py-3 border border-dashed border-berry text-berry rounded-xl text-xs font-medium">＋ 新增待繳項目</button>
     </div>
   </div>
 
-  <div id="addEntryModal" class="fixed inset-0 bg-black/20 z-50 hidden items-center justify-center backdrop-blur-sm px-4">
-    <div class="bg-white p-5 rounded-3xl shadow-xl w-full max-w-[340px] border border-pastel slide">
-      <div class="flex justify-between items-center mb-4">
+  <div id="addEntryModal" class="fixed inset-0 bg-black/20 z-50 hidden flex-col justify-end backdrop-blur-sm">
+    <div class="bg-white w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-[0_-8px_20px_rgba(255,108,159,0.15)] slide-up-drawer">
+      <div class="flex justify-between items-center mb-5">
         <h3 class="text-berry font-bold">🍓 新增記錄</h3>
         <button id="closeAddEntryBtn" class="text-slate-400 text-2xl">&times;</button>
       </div>
-      <div class="grid grid-cols-3 gap-3 mb-4">
-        <button id="btnIncome" class="py-2 rounded-xl bg-milk2 text-sm transition-colors">💗 收入</button>
-        <button id="btnExpense" class="py-2 rounded-xl bg-milk2 text-sm transition-colors">🧾 支出</button>
-        <button id="btnSaving" class="py-2 rounded-xl bg-milk2 text-sm transition-colors">🐷 儲蓄</button>
+      <div class="grid grid-cols-3 gap-3 mb-5">
+        <button id="btnIncome" class="py-2.5 rounded-xl bg-milk2 text-sm transition-colors">💗 收入</button>
+        <button id="btnExpense" class="py-2.5 rounded-xl bg-milk2 text-sm transition-colors">🧾 支出</button>
+        <button id="btnSaving" class="py-2.5 rounded-xl bg-milk2 text-sm transition-colors">🐷 儲蓄</button>
       </div>
-      <form id="entryForm" class="space-y-4 hidden">
+      <form id="entryForm" class="space-y-5 hidden">
         
         <div class="flex flex-col gap-3">
-            <input id="amountInput" type="number" inputmode="numeric" class="box-border w-full bg-white px-3 py-2 rounded-xl border border-slate-300 text-[16px] outline-none focus:border-berry" placeholder="金額" />
+            <input id="amountInput" type="number" inputmode="numeric" class="box-border w-full bg-milk2/30 px-4 py-3 rounded-xl border border-slate-200 text-[16px] outline-none focus:border-berry focus:bg-white transition-colors" placeholder="金額" />
             
-            <input id="dateInput" type="date" class="box-border w-full bg-white px-3 py-2 rounded-xl border border-slate-300 text-[16px] outline-none focus:border-berry appearance-none" />
+            <input id="dateInput" type="date" class="box-border w-full bg-milk2/30 px-4 py-3 rounded-xl border border-slate-200 text-[16px] outline-none focus:border-berry focus:bg-white transition-colors appearance-none" />
         </div>
         
-        <div id="expenseCategoryBlock" class="hidden space-y-2">
-            <div id="mainCategoryButtons" class="grid grid-cols-3 gap-2 text-xs"></div>
-            <div id="subCategoryButtons" class="grid grid-cols-3 gap-2 text-xs hidden pt-2 border-t border-pastel"></div>
+        <div id="expenseCategoryBlock" class="hidden space-y-3">
+            <div id="mainCategoryButtons" class="grid grid-cols-4 gap-2 text-xs"></div>
+            <div id="subCategoryButtons" class="grid grid-cols-4 gap-2 text-xs hidden pt-3 border-t border-pastel"></div>
         </div>
         
-        <input id="noteInput" type="text" class="box-border w-full bg-white px-3 py-2 rounded-xl border border-slate-300 text-[16px] outline-none focus:border-berry" placeholder="備註 (可留白)" />
-        <button type="submit" class="w-full py-2.5 bg-berry text-white rounded-xl text-sm shadow-sm">＋ 加入紀錄</button>
+        <input id="noteInput" type="text" class="box-border w-full bg-milk2/30 px-4 py-3 rounded-xl border border-slate-200 text-[16px] outline-none focus:border-berry focus:bg-white transition-colors" placeholder="備註 (可留白)" />
+        <button type="submit" class="w-full py-3 bg-berry text-white rounded-xl text-sm shadow-sm hover:opacity-90">＋ 加入紀錄</button>
         <p id="formError" class="text-xs text-red-500 hidden"></p>
       </form>
     </div>
   </div>
 
-  <div id="calcModal" class="fixed inset-0 bg-black/20 z-50 hidden items-center justify-center backdrop-blur-sm px-4">
-    <div class="bg-white p-5 rounded-3xl shadow-xl w-full max-w-[300px] border border-pastel slide">
-      <div class="flex justify-between items-center mb-2">
+  <div id="calcModal" class="fixed inset-0 bg-black/20 z-50 hidden flex-col justify-end backdrop-blur-sm">
+    <div class="bg-white w-full max-w-xl mx-auto rounded-t-3xl p-6 pb-12 shadow-[0_-8px_20px_rgba(255,108,159,0.15)] slide-up-drawer">
+      <div class="flex justify-between items-center mb-4">
         <h3 class="font-bold text-ink">🌸 小計算機</h3>
         <button id="closeCalcBtn" class="text-slate-400 text-2xl">&times;</button>
       </div>
-      <div class="bg-milk2 rounded-xl p-3 mb-4 text-right">
-        <div id="calcHistory" class="text-xs text-slate-400 min-h-[16px]"></div>
-        <div id="calcDisplay" class="text-2xl font-bold text-ink truncate">0</div>
+      <div class="bg-milk2 rounded-2xl p-4 mb-5 text-right">
+        <div id="calcHistory" class="text-xs text-slate-400 min-h-[16px] mb-1"></div>
+        <div id="calcDisplay" class="text-3xl font-bold text-ink truncate">0</div>
       </div>
-      <div class="grid grid-cols-4 gap-2" id="calcKeypad">
-        <button class="bg-slate-100 text-ink p-3 rounded-xl" data-val="C">C</button>
-        <button class="bg-slate-100 text-ink p-3 rounded-xl" data-val="DEL">⌫</button>
-        <button class="bg-slate-100 text-ink p-3 rounded-xl" data-val="%">%</button>
-        <button class="bg-blush text-white p-3 rounded-xl" data-val="/">÷</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val="7">7</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val="8">8</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val="9">9</button>
-        <button class="bg-blush text-white p-3 rounded-xl" data-val="*">×</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val="4">4</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val="5">5</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val="6">6</button>
-        <button class="bg-blush text-white p-3 rounded-xl" data-val="-">-</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val="1">1</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val="2">2</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val="3">3</button>
-        <button class="bg-blush text-white p-3 rounded-xl" data-val="+">+</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm col-span-2" data-val="0">0</button>
-        <button class="bg-white text-ink border border-slate-100 p-3 rounded-xl shadow-sm" data-val=".">.</button>
-        <button class="bg-berry text-white p-3 rounded-xl shadow-sm" data-val="=">=</button>
+      <div class="grid grid-cols-4 gap-3" id="calcKeypad">
+        <button class="bg-slate-100 text-ink py-4 rounded-2xl text-lg" data-val="C">C</button>
+        <button class="bg-slate-100 text-ink py-4 rounded-2xl text-lg" data-val="DEL">⌫</button>
+        <button class="bg-slate-100 text-ink py-4 rounded-2xl text-lg" data-val="%">%</button>
+        <button class="bg-blush text-white py-4 rounded-2xl text-lg" data-val="/">÷</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="7">7</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="8">8</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="9">9</button>
+        <button class="bg-blush text-white py-4 rounded-2xl text-lg" data-val="*">×</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="4">4</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="5">5</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="6">6</button>
+        <button class="bg-blush text-white py-4 rounded-2xl text-lg" data-val="-">-</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="1">1</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="2">2</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val="3">3</button>
+        <button class="bg-blush text-white py-4 rounded-2xl text-lg" data-val="+">+</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm col-span-2" data-val="0">0</button>
+        <button class="bg-white text-ink border border-slate-100 py-4 rounded-2xl text-lg shadow-sm" data-val=".">.</button>
+        <button class="bg-berry text-white py-4 rounded-2xl text-lg shadow-sm" data-val="=">=</button>
       </div>
     </div>
   </div>
@@ -330,14 +343,34 @@
       renderPieChart(list);
     }
 
-    const toggle = (id, show) => {
+    // 更新選單顏色的視覺提醒魔法
+    function setActiveNav(navId) {
+      ['navChart', 'navAdd', 'navNotes', 'navCalc'].forEach(id => {
+          const btn = document.getElementById(id);
+          if(btn) {
+              btn.classList.remove('bg-milk2', 'text-berry');
+              btn.classList.add('text-slate-400');
+          }
+      });
+      if(navId) {
+          const btn = document.getElementById(navId);
+          if(btn) {
+              btn.classList.add('bg-milk2', 'text-berry');
+              btn.classList.remove('text-slate-400');
+          }
+      }
+    }
+
+    const toggle = (id, show, navId) => {
       const el = document.getElementById(id);
       if (show) {
         el.classList.remove('hidden');
         el.classList.add('flex');
+        setActiveNav(navId);
       } else {
         el.classList.add('hidden');
         el.classList.remove('flex');
+        setActiveNav(null); // 關閉時清空顏色
       }
     };
 
@@ -356,24 +389,24 @@
       selectedSubCategory = null;
     }
 
-    document.getElementById("calcFab").onclick = () => toggle("calcModal", true);
-    document.getElementById("closeCalcBtn").onclick = () => toggle("calcModal", false);
+    // 重新綁定導覽列的按鈕事件
+    document.getElementById("navChart").onclick = () => toggle("chartModal", true, "navChart");
+    document.getElementById("closeChartBtn").onclick = () => toggle("chartModal", false);
     
-    document.getElementById("notesFab").onclick = () => toggle("notesModal", true);
+    document.getElementById("navNotes").onclick = () => toggle("notesModal", true, "navNotes");
     document.getElementById("closeNotesBtn").onclick = () => toggle("notesModal", false);
     
-    document.getElementById("addEntryFab").onclick = () => {
-        toggle("addEntryModal", true);
+    document.getElementById("navAdd").onclick = () => {
+        toggle("addEntryModal", true, "navAdd");
         setupForm('expense');
     };
-    
     document.getElementById("closeAddEntryBtn").onclick = () => {
         toggle("addEntryModal", false);
         resetForm();
     };
     
-    document.getElementById("chartFab").onclick = () => toggle("chartModal", true);
-    document.getElementById("closeChartBtn").onclick = () => toggle("chartModal", false);
+    document.getElementById("navCalc").onclick = () => toggle("calcModal", true, "navCalc");
+    document.getElementById("closeCalcBtn").onclick = () => toggle("calcModal", false);
 
     document.getElementById("btnIncome").onclick = () => setupForm('income');
     document.getElementById("btnExpense").onclick = () => setupForm('expense');
@@ -409,7 +442,7 @@
 
       Object.keys(categoryData).forEach(cat => {
         const btn = document.createElement("button"); 
-        btn.className = "p-2 bg-milk2 text-ink rounded-lg text-[10px] transition-colors"; 
+        btn.className = "py-2 px-1 bg-milk2 text-ink rounded-lg text-[11px] transition-colors truncate"; 
         btn.textContent = cat;
         
         btn.onclick = (ev) => { 
@@ -437,7 +470,7 @@
 
       categoryData[mainCat].forEach(sub => {
         const btn = document.createElement("button");
-        btn.className = "p-2 bg-milk2 text-ink rounded-lg text-[10px] transition-colors";
+        btn.className = "py-2 px-1 bg-milk2 text-ink rounded-lg text-[11px] transition-colors truncate";
         btn.textContent = sub;
         
         if(sub === selectedSubCategory) {
@@ -529,15 +562,15 @@
       sortedBills.forEach((b) => {
         const originalIndex = fixedBills.indexOf(b);
         const div = document.createElement("div");
-        div.className = "flex items-center justify-between gap-2 py-2 border-b border-pastel text-sm";
+        div.className = "flex items-center justify-between gap-2 py-3 border-b border-pastel text-sm";
 
         div.innerHTML = `
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-3">
             <input type="checkbox" class="custom-checkbox" 
               ${b.done ? "checked" : ""} 
               onchange="checkBill(${originalIndex})" />
             <div class="flex flex-col">
-              <span class="${b.done ? "bill-done text-slate-400" : "text-ink"}">
+              <span class="${b.done ? "bill-done text-slate-400" : "text-ink font-medium"}">
                 ${b.name} ${b.amount ? "- $" + Number(b.amount).toLocaleString() : ""}
               </span>
               ${b.dueDate ? `<span class="text-[10px] text-slate-400 mt-0.5">預計繳款：${b.dueDate}</span>` : ""}
