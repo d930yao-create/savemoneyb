@@ -35,9 +35,9 @@
   </script>
 
   <style>
-    /* 抽屜滑出的專屬動畫 */
+    /* 將動畫時間拉長至 0.6s，讓滑出感更優雅溫柔 */
     .slide-up-drawer {
-      animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes slideUp {
       from { transform: translateY(100%); opacity: 0.5; }
@@ -56,8 +56,9 @@
       scrollbar-width: none;
     }
 
+    /* 因為導覽列變扁，上方清單可以看得更多 */
     .scroll-area {
-      height: calc(100vh - 340px); 
+      height: calc(100vh - 300px); 
       min-height: 300px;
     }
 
@@ -118,29 +119,25 @@
         <span id="recordCount" class="text-xs text-slate-400"></span>
       </div>
 
-      <div id="mobileList" class="space-y-2 overflow-y-auto hide-scrollbar scroll-area pb-28">
+      <div id="mobileList" class="space-y-2 overflow-y-auto hide-scrollbar scroll-area pb-20">
       </div>
       <p id="emptyHint" class="text-xs text-slate-400 mt-10 hidden text-center">目前沒有紀錄。</p>
     </section>
 
   </div>
 
-  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-white/95 backdrop-blur-md border-t border-pastel rounded-t-3xl pb-8 pt-3 px-6 flex justify-between z-40 shadow-[0_-10px_30px_rgba(255,108,159,0.06)]">
-    <button id="navChart" class="flex flex-col items-center gap-1 p-2 w-16 rounded-2xl text-slate-400 transition-colors">
+  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-white/95 backdrop-blur-md border-t border-pastel rounded-t-3xl pb-6 pt-2 px-10 flex justify-between z-40 shadow-[0_-10px_30px_rgba(255,108,159,0.06)]">
+    <button id="navChart" class="flex flex-col items-center p-2 rounded-xl text-slate-400 transition-colors">
       <span class="text-2xl">🍪</span>
-      <span class="text-[10px] font-medium tracking-wider">圖表</span>
     </button>
-    <button id="navAdd" class="flex flex-col items-center gap-1 p-2 w-16 rounded-2xl text-slate-400 transition-colors">
+    <button id="navAdd" class="flex flex-col items-center p-2 rounded-xl text-slate-400 transition-colors">
       <span class="text-2xl">✏️</span>
-      <span class="text-[10px] font-medium tracking-wider">記帳</span>
     </button>
-    <button id="navNotes" class="flex flex-col items-center gap-1 p-2 w-16 rounded-2xl text-slate-400 transition-colors">
+    <button id="navNotes" class="flex flex-col items-center p-2 rounded-xl text-slate-400 transition-colors">
       <span class="text-2xl">📒</span>
-      <span class="text-[10px] font-medium tracking-wider">待繳</span>
     </button>
-    <button id="navCalc" class="flex flex-col items-center gap-1 p-2 w-16 rounded-2xl text-slate-400 transition-colors">
+    <button id="navCalc" class="flex flex-col items-center p-2 rounded-xl text-slate-400 transition-colors">
       <span class="text-2xl">🐥</span>
-      <span class="text-[10px] font-medium tracking-wider">計算</span>
     </button>
   </nav>
 
@@ -234,6 +231,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
+    // 記得內容不要變唷！這裡是修改子分類的地方
     const categoryData = {
       "🍱 飲食": ["早餐", "午餐", "晚餐", "點心", "宵夜", "小吃", "飲料", "其他"],
       "🚗 交通": ["大眾運輸", "加油", "Uber／計程車", "停車費", "其他"],
@@ -343,20 +341,17 @@
       renderPieChart(list);
     }
 
-    // 更新選單顏色的視覺提醒魔法
     function setActiveNav(navId) {
       ['navChart', 'navAdd', 'navNotes', 'navCalc'].forEach(id => {
           const btn = document.getElementById(id);
           if(btn) {
-              btn.classList.remove('bg-milk2', 'text-berry');
-              btn.classList.add('text-slate-400');
+              btn.classList.remove('bg-milk2');
           }
       });
       if(navId) {
           const btn = document.getElementById(navId);
           if(btn) {
-              btn.classList.add('bg-milk2', 'text-berry');
-              btn.classList.remove('text-slate-400');
+              btn.classList.add('bg-milk2');
           }
       }
     }
@@ -370,7 +365,7 @@
       } else {
         el.classList.add('hidden');
         el.classList.remove('flex');
-        setActiveNav(null); // 關閉時清空顏色
+        setActiveNav(null); 
       }
     };
 
@@ -389,7 +384,6 @@
       selectedSubCategory = null;
     }
 
-    // 重新綁定導覽列的按鈕事件
     document.getElementById("navChart").onclick = () => toggle("chartModal", true, "navChart");
     document.getElementById("closeChartBtn").onclick = () => toggle("chartModal", false);
     
