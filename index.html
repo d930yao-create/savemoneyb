@@ -314,22 +314,33 @@
     };
 
     /* --- 待繳清單 --- */
-    function renderFixedBills() {
-      billListEl.innerHTML = "";
-      fixedBills.forEach((b, i) => {
-        const div = document.createElement("div"); div.className = "flex items-center gap-2 py-1 border-b border-pastel";
-        div.innerHTML = `<input type="checkbox" onchange="checkBill('${b.id}', this)" class="custom-checkbox"> <input type="text" value="${b.name}" class="text-xs w-full outline-none" onchange="fixedBills[${i}].name=this.value;saveBills()"> <input type="number" value="${b.amount}" class="text-xs w-16 text-right outline-none" onchange="fixedBills[${i}].amount=this.value;saveBills()">`;
-        billListEl.appendChild(div);
-      });
-    }
-    window.checkBill = (id, el) => {
-      if(el.checked) {
-        el.nextSibling.nextSibling.classList.add('bill-done');
-        setTimeout(() => { fixedBills = fixedBills.filter(b => b.id !== id); saveBills(); renderFixedBills(); }, 3000);
-      }
-    };
-    function saveBills() { localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills)); }
-    document.getElementById("addBillBtn").onclick = () => { fixedBills.push({id:Date.now().toString(), name:'', amount:0}); renderFixedBills(); };
+function renderFixedBills() {
+  billListEl.innerHTML = "";
+
+  if (fixedBills.length === 0) {
+    billListEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">目前沒有待繳項目</p>`;
+    return;
+  }
+
+  fixedBills.forEach((b, i) => {
+    const div = document.createElement("div");
+    div.className = "flex items-center justify-between gap-2 py-2 border-b border-pastel text-sm";
+
+    div.innerHTML = `
+      <div class="flex items-center gap-2">
+        <input type="checkbox" class="custom-checkbox" 
+          ${b.done ? "checked" : ""} 
+          onchange="checkBill(${i})" />
+        <span class="${b.done ? "bill-done" : ""}">
+          ${b.name} ${b.amount ? "- $" + Number(b.amount).toLocaleString() : ""}
+        </span>
+      </div>
+      <button onclick="deleteBill(${i})" class="text-xs text-red-300">刪除</button>
+    `;
+
+    billListEl.appendChild(div);
+  });
+}
 
     /* --- 圓餅圖 --- */
     function renderPieChart(list) {
@@ -351,6 +362,34 @@
 
     monthFilter.onchange = render;
     init();
+    function checkBill(index) {
+  fixedBills[index].done = !fixedBills[index].done;
+  localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills));
+  renderFixedBills();
+}
+
+function deleteBill(index) {
+  if (!confirm("確定刪除這筆待繳項目？")) return;
+  fixedBills.splice(index, 1);
+  localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills));
+  renderFixedBills();
+}
+
+document.getElementById("addBillBtn").onclick = () => {
+  const name = prompt("請輸入項目名稱");
+  if (!name) return;
+
+  const amount = prompt("金額（可留空）");
+
+  fixedBills.push({
+    name,
+    amount: amount || "",
+    done: false
+  });
+
+  localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills));
+  renderFixedBills();
+};
   </script>
 </body>
 </html>
