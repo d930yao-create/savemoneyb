@@ -166,9 +166,11 @@
         <button id="btnSaving" class="py-2 rounded-xl bg-milk2 text-sm transition-colors">🐷 儲蓄</button>
       </div>
       <form id="entryForm" class="space-y-4 hidden">
-        <input id="amountInput" type="number" inputmode="numeric" class="box-border w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" placeholder="金額" />
-<input id="dateInput" type="date" 
-  class="box-border w-80 px-0 py-2 border-t-0 border-x-0 border-b border-slate-200 text-xs outline-none focus:border-berry focus:ring-0" />
+        
+        <div class="flex gap-2">
+            <input id="amountInput" type="number" inputmode="numeric" class="box-border w-1/2 px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" placeholder="金額" />
+            <input id="dateInput" type="date" class="box-border w-1/2 px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" />
+        </div>
         
         <div id="expenseCategoryBlock" class="hidden space-y-2">
             <div id="mainCategoryButtons" class="grid grid-cols-3 gap-2 text-xs"></div>
@@ -222,28 +224,12 @@
     const STORAGE_KEY = "cute-book-entries-v2", FIXED_BILLS_KEY = "cute-fixed-bills-v3";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec';
 
-const chartColors = [
-  '#FFB7B2', // 蜜桃粉
-  '#FFDAC1', // 奶油橘
-  '#E2F0CB', // 嫩草綠
-  '#B5EAD7', // 薄荷綠
-  '#C7CEEA', // 薰衣草紫
-  '#FF9AA2', // 玫瑰粉
-  '#FFB7CE', // 櫻花粉
-  '#D4F1F4', // 蘇打藍
-  '#AFCBFF', // 天空藍
-  '#D0D0D0', // 芝麻灰 (淡)
-  '#E0BBE4', // 丁香紫
-  '#957DAD', // 藍莓紫
-  '#D291BC', // 覆盆子粉
-  '#FEC8D8', // 糖果粉
-  '#FFDFD3', // 杏桃橙
-  '#FFF5BA', // 檸檬黃
-  '#C5E1A5', // 抹茶綠
-  '#A5D6A7', // 開心果綠
-  '#B3E5FC', // 水藍色
-  '#F48FB1'  // 珊瑚紅 (粉)
-];
+    const chartColors = [
+      '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA', 
+      '#FF9AA2', '#FFB7CE', '#D4F1F4', '#AFCBFF', '#D0D0D0', 
+      '#E0BBE4', '#957DAD', '#D291BC', '#FEC8D8', '#FFDFD3', 
+      '#FFF5BA', '#C5E1A5', '#A5D6A7', '#B3E5FC', '#F48FB1'
+    ];
 
     let entries = [], fixedBills = [], selectedType = null, selectedMainCategory = null, selectedSubCategory = null, pieChart = null;
 
@@ -275,7 +261,6 @@ const chartColors = [
         const result = await res.json();
         if (result.status === 'success') {
           entries = result.data.map(e => {
-            // 處理日期格式，切掉 T 以後的時區雜訊
             let cleanDate = e.date || '';
             if (cleanDate.includes('T')) {
                 cleanDate = cleanDate.split('T')[0];
@@ -363,13 +348,11 @@ const chartColors = [
     document.getElementById("notesFab").onclick = () => toggle("notesModal", true);
     document.getElementById("closeNotesBtn").onclick = () => toggle("notesModal", false);
     
-    // 點擊新增按鈕時，打開視窗並自動預設為支出
     document.getElementById("addEntryFab").onclick = () => {
         toggle("addEntryModal", true);
         setupForm('expense');
     };
     
-    // 關閉新增視窗時，順手清空表單
     document.getElementById("closeAddEntryBtn").onclick = () => {
         toggle("addEntryModal", false);
         resetForm();
@@ -591,7 +574,10 @@ const chartColors = [
           if(e.mainCategory) data[e.mainCategory] = (data[e.mainCategory]||0) + e.amount;
       });
       
-      if(pieChart) pieChart.destroy();
+      if(pieChart) {
+          pieChart.destroy(); // 確實銷毀舊的圖表，讓新顏色可以順利套用
+      }
+      
       pieChart = new Chart(ctx, { 
           type:'pie', 
           data: { 
