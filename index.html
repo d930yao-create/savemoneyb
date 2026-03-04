@@ -125,16 +125,16 @@
   </div>
 
   <div class="fixed bottom-6 right-4 flex flex-col gap-3 z-40 items-center">
-    <button id="chartFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">📊</button>
-    <button id="addEntryFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">➕</button>
-    <button id="notesFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">☁️</button>
-    <button id="calcFab" class="bg-berry text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">🌸</button>
+    <button id="chartFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">🍪</button>
+    <button id="addEntryFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">✏️</button>
+    <button id="notesFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">📒</button>
+    <button id="calcFab" class="bg-blush text-white w-12 h-12 rounded-full shadow-float flex items-center justify-center text-2xl transition-transform active:scale-95">🐥</button>
   </div>
 
   <div id="chartModal" class="fixed inset-0 bg-black/20 z-50 hidden items-center justify-center backdrop-blur-sm px-4">
     <div class="bg-white p-5 rounded-3xl shadow-xl w-full max-w-[320px] border border-pastel slide">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-ink font-bold">📊 支出分類統計</h3>
+        <h3 class="text-ink font-bold">📊支出分類統計</h3>
         <button id="closeChartBtn" class="text-slate-400 text-2xl">&times;</button>
       </div>
       <div class="h-[250px] flex items-center justify-center">
@@ -166,15 +166,15 @@
         <button id="btnSaving" class="py-2 rounded-xl bg-milk2 text-sm transition-colors">🐷 儲蓄</button>
       </div>
       <form id="entryForm" class="space-y-4 hidden">
-        <input id="amountInput" type="number" inputmode="numeric" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" placeholder="金額" />
-        <input id="dateInput" type="date" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" />
+        <input id="amountInput" type="number" inputmode="numeric" class="box-border w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" placeholder="金額" />
+        <input id="dateInput" type="date" class="box-border w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" />
         
         <div id="expenseCategoryBlock" class="hidden space-y-2">
             <div id="mainCategoryButtons" class="grid grid-cols-3 gap-2 text-xs"></div>
             <div id="subCategoryButtons" class="grid grid-cols-3 gap-2 text-xs hidden pt-2 border-t border-pastel"></div>
         </div>
         
-        <input id="noteInput" type="text" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" placeholder="備註 (可留白)" />
+        <input id="noteInput" type="text" class="box-border w-full px-3 py-2 rounded-xl border border-slate-300 text-sm outline-none focus:border-berry" placeholder="備註 (可留白)" />
         <button type="submit" class="w-full py-2.5 bg-berry text-white rounded-xl text-sm shadow-sm">＋ 加入紀錄</button>
         <p id="formError" class="text-xs text-red-500 hidden"></p>
       </form>
@@ -221,7 +221,6 @@
     const STORAGE_KEY = "cute-book-entries-v2", FIXED_BILLS_KEY = "cute-fixed-bills-v3";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec';
 
-    // 擴充更豐富的溫柔粉彩色系
     const chartColors = [
       '#FFB7CE', '#FF6C9F', '#FFE3ED', '#FFD1DC', '#fbcfe8', 
       '#f9a8d4', '#f472b6', '#fda4af', '#fb7185', '#e879f9', 
@@ -238,7 +237,7 @@
       const currentMonth = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}`;
       
       monthFilter.value = currentMonth;
-      monthFilter.max = currentMonth; // 防呆限制：不可選擇未來的月份
+      monthFilter.max = currentMonth;
       
       document.getElementById("dateInput").value = `${currentMonth}-${String(t.getDate()).padStart(2,"0")}`;
       
@@ -258,7 +257,14 @@
         const res = await fetch(SCRIPT_URL);
         const result = await res.json();
         if (result.status === 'success') {
-          entries = result.data.map(e => ({...e, amount: parseFloat(e.amount)}));
+          entries = result.data.map(e => {
+            // 處理日期格式，切掉 T 以後的時區雜訊
+            let cleanDate = e.date || '';
+            if (cleanDate.includes('T')) {
+                cleanDate = cleanDate.split('T')[0];
+            }
+            return {...e, amount: parseFloat(e.amount), date: cleanDate};
+          });
           localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
           render();
         }
@@ -319,12 +325,39 @@
       }
     };
 
+    function resetForm() {
+      document.getElementById("amountInput").value = "";
+      document.getElementById("noteInput").value = "";
+      document.getElementById("expenseCategoryBlock").classList.add("hidden");
+      
+      ['btnIncome', 'btnExpense', 'btnSaving'].forEach(id => {
+        document.getElementById(id).classList.replace('bg-blush', 'bg-milk2');
+        document.getElementById(id).classList.replace('text-white', 'text-ink');
+      });
+      
+      selectedType = null;
+      selectedMainCategory = null;
+      selectedSubCategory = null;
+    }
+
     document.getElementById("calcFab").onclick = () => toggle("calcModal", true);
     document.getElementById("closeCalcBtn").onclick = () => toggle("calcModal", false);
+    
     document.getElementById("notesFab").onclick = () => toggle("notesModal", true);
     document.getElementById("closeNotesBtn").onclick = () => toggle("notesModal", false);
-    document.getElementById("addEntryFab").onclick = () => toggle("addEntryModal", true);
-    document.getElementById("closeAddEntryBtn").onclick = () => toggle("addEntryModal", false);
+    
+    // 點擊新增按鈕時，打開視窗並自動預設為支出
+    document.getElementById("addEntryFab").onclick = () => {
+        toggle("addEntryModal", true);
+        setupForm('expense');
+    };
+    
+    // 關閉新增視窗時，順手清空表單
+    document.getElementById("closeAddEntryBtn").onclick = () => {
+        toggle("addEntryModal", false);
+        resetForm();
+    };
+    
     document.getElementById("chartFab").onclick = () => toggle("chartModal", true);
     document.getElementById("closeChartBtn").onclick = () => toggle("chartModal", false);
 
@@ -440,17 +473,9 @@
       render(); 
       toggle("addEntryModal", false);
       
-      amtInput.value = "";
-      noteInput.value = "";
-      document.getElementById("expenseCategoryBlock").classList.add("hidden");
-      ['btnIncome', 'btnExpense', 'btnSaving'].forEach(id => {
-        document.getElementById(id).classList.replace('bg-blush', 'bg-milk2');
-        document.getElementById(id).classList.replace('text-white', 'text-ink');
-      });
-      selectedType = null;
+      resetForm();
 
       try {
-          // 使用 text/plain 避免跨網域預檢請求被擋
           await fetch(SCRIPT_URL, { 
               method: 'POST', 
               headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -465,7 +490,6 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
       render();
       try {
-          // 加上 action: 'DELETE' 供後端辨識
           await fetch(SCRIPT_URL, { 
               method: 'POST', 
               headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -482,7 +506,6 @@
         return;
       }
 
-      // 依日期排序，沒有日期的放後面
       const sortedBills = [...fixedBills].sort((a, b) => {
           if(!a.dueDate) return 1;
           if(!b.dueDate) return -1;
@@ -558,7 +581,6 @@
               labels:Object.keys(data), 
               datasets:[{
                   data:Object.values(data), 
-                  // 載入更長的調色盤
                   backgroundColor: chartColors.slice(0, Object.keys(data).length)
               }] 
           }, 
@@ -570,15 +592,12 @@
       });
     }
 
-    // 安全的數學運算邏輯，取代 eval
     function safeCalculate(expression) {
         let str = expression.replace(/×/g, '*').replace(/÷/g, '/');
-        // 只允許數字與基礎運算符號通過，避免惡意代碼
         if (/[^0-9+\-*/.]/.test(str)) return 'Error';
         
         try { 
             const result = new Function('return ' + str)(); 
-            // 處理除以零或無效數字的情況
             if (!isFinite(result) || isNaN(result)) return 'Error';
             return String(result);
         } catch(e) { 
@@ -598,7 +617,6 @@
       } else if(v === '=') {
           calcVal = safeCalculate(calcVal);
       } else {
-          // 避免開頭輸入錯誤的運算符
           if (calcVal === '0' && !['+', '-', '*', '/'].includes(v)) {
               calcVal = v;
           } else {
