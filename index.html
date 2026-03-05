@@ -18,17 +18,17 @@
             sans: ['"Zen Maru Gothic"', 'sans-serif'], 
           },
           colors: {
-            milk: "#F9F6FA",          // 溫柔極淡的紫白底色
-            cardBg: "#FFFFFF",        // 卡片純白
-            lavenderSoft: "#F3EDF7",  // 替換原本的灰色，極淡靛紫
-            lavenderBorder: "#E9E0EF",// 替換原本的灰色邊框
+            milk: "#F9F6FA",          
+            cardBg: "#FFFFFF",        
+            lavenderSoft: "#F3EDF7",  
+            lavenderBorder: "#E9E0EF",
             macaronTeal: "#B2DFDB", 
             macaronRose: "#f5ccde", 
             macaronOrange: "#FFD180", 
             macaronPeach: "#FFCCBC",  
             navYellow: "#FFF9C4",   
             rose: "#FF4D8D",        
-            ink: "#41384F",           // 深紫黑字體，取代純黑與深灰，更有質感
+            ink: "#5C3A2E",           
             happyOrange: "#FF9800"  
           },
           boxShadow: { 
@@ -60,14 +60,32 @@
     
     .nav-active { background-color: #FFF9C4; opacity: 1 !important; transform: translateY(-2px); }
     
-    #floatingCalc { position: fixed; bottom: 115px; right: 20px; z-index: 50; width: 60px; height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; transition: transform 0.2s; }
+    /* 懸浮計算機修正：拉高位置、改用嫩黃色、加上細緻邊框 */
+    #floatingCalc { 
+        position: fixed; 
+        bottom: 160px; /* 拉高位置 */
+        right: 20px; 
+        z-index: 50; 
+        width: 60px; 
+        height: 60px; 
+        border-radius: 30px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 32px; /* 稍微放大圖示 */
+        cursor: pointer; 
+        background-color: #FFF9C4; /* 換成嫩黃色 */
+        border: 1px solid #E9E0EF; /* 加上淡淡的邊框增加立體感 */
+        box-shadow: 0 6px 20px rgba(65, 56, 79, 0.15); /* 換成比較柔和的陰影 */
+        transition: transform 0.2s; 
+    }
     #floatingCalc:active { transform: scale(0.9); }
   </style>
 </head>
 
 <body class="bg-milk text-ink h-screen overflow-hidden relative">
   
-  <div id="floatingCalc" class="bg-macaronOrange shadow-float" onclick="openCalc()">🐥</div>
+  <div id="floatingCalc" onclick="openCalc()">🐥</div>
 
   <div class="max-w-xl mx-auto px-4 py-6 h-full flex flex-col">
     <div id="pageHome" class="page-content active">
@@ -116,13 +134,13 @@
               <span id="billTotalDisplay" class="text-lg font-bold text-ink">$0</span>
           </div>
       </div>
-      <div class="card-solid rounded-[32px] p-5 shadow-soft flex-grow flex flex-col overflow-hidden mb-4">
-        <div class="flex px-10 mb-3 text-sm text-ink/50 font-bold">
+      <div class="card-solid rounded-[32px] p-5 shadow-soft flex-grow flex flex-col overflow-hidden mb-4 pb-32">
+        <div class="flex px-10 mb-3 text-sm text-ink/50 font-bold flex-shrink-0">
             <span class="flex-1">項目名稱</span>
             <span class="w-[90px] text-right">預計金額</span>
         </div>
-        <div id="billList" class="overflow-y-auto hide-scrollbar space-y-2 mb-4 px-1 pb-32"></div>
-        <button id="addBillBtn" class="w-full py-4 border-2 border-dashed border-macaronPeach text-ink/70 rounded-[20px] text-base font-bold bg-milk active:bg-lavenderSoft transition-colors mt-auto">＋ 新增一列項目</button>
+        <div id="billList" class="overflow-y-auto hide-scrollbar space-y-2 mb-4 px-1 flex-grow"></div>
+        <button id="addBillBtn" class="w-full py-4 border-2 border-dashed border-macaronPeach text-ink/70 rounded-[20px] text-base font-bold bg-milk active:bg-lavenderSoft transition-colors flex-shrink-0">＋ 新增一列項目</button>
       </div>
     </div>
     
@@ -200,7 +218,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // 獨立專屬分類庫上線！
     const categoryData = {
       expense: {
         "🍱 飲食":["早餐","午餐","晚餐","點心","宵夜","小吃","飲料","其他"],
@@ -316,7 +333,7 @@
 
     function setupForm(type) {
       selectedType = type;
-      document.getElementById("expenseCategoryBlock").classList.toggle("hidden", false); // 總是顯示分類區塊
+      document.getElementById("expenseCategoryBlock").classList.toggle("hidden", false); 
       
       ['btnIncome', 'btnExpense', 'btnSaving'].forEach(id => {
         const btn = document.getElementById(id);
