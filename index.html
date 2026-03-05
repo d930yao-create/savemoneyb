@@ -18,17 +18,17 @@
       theme: {
         extend: {
           colors: {
-            milk: "#F8F9FA",
-            milk2: "#E9ECEF",
-            berry: "#B5838D",
-            blush: "#D4A373",
-            pastel: "#DBE1DC",
-            ink: "#4A4E69",
-            success: "#84A59D",
+            milk: "#FFFBFC",      // 櫻花白
+            milk2: "#FFF0F3",     // 草莓牛奶
+            berry: "#FFB7CE",     // 柔粉色
+            blush: "#FFE5EC",     // 淡腮紅粉
+            pastel: "#FFD1DC",    // 玫瑰粉
+            ink: "#5E548E",       // 深李紫 (文字用)
+            success: "#A2D2FF",   // 蘇打藍
           },
           boxShadow: {
-            soft: "0 4px 15px 0 rgba(74, 78, 105, 0.05)",
-            float: "0 8px 25px rgba(181, 131, 141, 0.2)",
+            soft: "0 4px 15px 0 rgba(255, 183, 206, 0.15)",
+            float: "0 8px 25px rgba(255, 183, 206, 0.3)",
           },
         },
       },
@@ -38,15 +38,18 @@
   <style>
     .page-content { display: none; height: 100%; }
     .page-content.active { display: flex; flex-direction: column; }
-    .card-solid { background: #FFFFFF !important; border: 1px solid rgba(219, 225, 220, 0.5); }
+    .card-solid { background: #FFFFFF !important; border: 1px solid #FFE5EC; }
     button { -webkit-tap-highlight-color: transparent; }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .custom-checkbox { accent-color: #B5838D; width: 18px; height: 18px; }
-    .bill-done { text-decoration: line-through; color: #ADB5BD !important; opacity: 0.6; }
-    .bill-input-name { background: transparent; border: none; width: 100%; font-size: 16px; color: #4A4E69; outline: none; }
-    .bill-input-amount { background: transparent; border: none; width: 80px; font-size: 15px; color: #B5838D; outline: none; text-align: right; font-weight: 500; }
-    .nav-active { background-color: rgba(181, 131, 141, 0.1); opacity: 1 !important; filter: grayscale(0) !important; }
+    .custom-checkbox { accent-color: #FFB7CE; width: 18px; height: 18px; }
+    .bill-done { text-decoration: line-through; color: #D1D1D1 !important; opacity: 0.6; }
+    
+    /* 待繳雙欄編輯 */
+    .bill-input-name { background: transparent; border: none; width: 100%; font-size: 16px; color: #5E548E; outline: none; }
+    .bill-input-amount { background: transparent; border: none; width: 80px; font-size: 15px; color: #FF6B95; outline: none; text-align: right; font-weight: 600; }
+    
+    .nav-active { background-color: #FFF0F3; opacity: 1 !important; filter: grayscale(0) !important; }
   </style>
 </head>
 
@@ -55,35 +58,35 @@
   <div class="max-w-xl mx-auto px-4 py-6 h-full flex flex-col">
     
     <div id="pageHome" class="page-content active">
-      <section class="card-solid rounded-3xl p-5 flex-shrink-0 shadow-soft mb-4">
+      <section class="card-solid rounded-[32px] p-5 flex-shrink-0 shadow-soft mb-4">
         <div class="flex justify-between items-center mb-4">
           <h1 class="text-lg font-bold text-ink/80">✨ 本月總覽</h1>
-          <input id="monthFilter" type="month" class="px-2 py-1 bg-milk2/50 rounded-xl border border-pastel text-xs text-ink outline-none appearance-none" />
+          <input id="monthFilter" type="month" class="px-3 py-1 bg-milk2/50 rounded-xl border border-blush text-xs text-ink outline-none appearance-none" />
         </div>
         <div class="flex justify-between items-center bg-milk2/40 rounded-2xl p-3 mb-4">
-          <div class="text-center w-1/3"><p class="text-[10px] text-slate-400 mb-1">收入</p><p id="sumIncome" class="text-sm font-semibold text-success">$0</p></div>
-          <div class="text-center w-1/3 border-l border-r border-white"><p class="text-[10px] text-slate-400 mb-1">支出</p><p id="sumExpense" class="text-sm font-semibold text-berry/80">$0</p></div>
-          <div class="text-center w-1/3"><p class="text-[10px] text-slate-400 mb-1">儲蓄</p><p id="sumSaving" class="text-sm font-semibold text-ink/60">$0</p></div>
+          <div class="text-center w-1/3"><p class="text-[10px] text-ink/40 mb-1">收入</p><p id="sumIncome" class="text-sm font-semibold text-success">$0</p></div>
+          <div class="text-center w-1/3 border-l border-r border-white"><p class="text-[10px] text-ink/40 mb-1">支出</p><p id="sumExpense" class="text-sm font-semibold text-berry">$0</p></div>
+          <div class="text-center w-1/3"><p class="text-[10px] text-ink/40 mb-1">儲蓄</p><p id="sumSaving" class="text-sm font-semibold text-ink/50">$0</p></div>
         </div>
-        <div class="bg-milk/50 border border-pastel/30 rounded-2xl p-4 flex justify-between items-center">
-          <div class="flex flex-col"><span class="text-xs text-slate-500">可用現金</span><span class="text-[9px] text-slate-400">已扣除支出與儲蓄</span></div>
+        <div class="bg-milk/50 border border-blush/30 rounded-2xl p-4 flex justify-between items-center">
+          <div class="flex flex-col"><span class="text-xs text-ink/60">可用現金</span><span class="text-[9px] text-ink/30">已扣除支出與儲蓄</span></div>
           <span id="sumBalance" class="text-xl font-bold text-berry">$0</span>
         </div>
       </section>
 
-      <section class="card-solid rounded-3xl p-4 flex-grow flex flex-col overflow-hidden shadow-soft mb-20">
+      <section class="card-solid rounded-[32px] p-4 flex-grow flex flex-col overflow-hidden shadow-soft mb-20">
         <div class="flex justify-between items-center mb-3 px-1">
-          <h2 class="text-sm font-semibold text-ink/80">📋 明細清單</h2>
-          <span id="recordCount" class="text-xs text-slate-400"></span>
+          <h2 class="text-sm font-semibold text-ink/70 font-medium">📋 明細清單</h2>
+          <span id="recordCount" class="text-xs text-ink/30"></span>
         </div>
         <div id="mobileList" class="space-y-2 overflow-y-auto hide-scrollbar pb-10"></div>
-        <p id="emptyHint" class="text-xs text-slate-400 mt-10 hidden text-center">目前沒有紀錄。</p>
+        <p id="emptyHint" class="text-xs text-ink/20 mt-10 hidden text-center">目前沒有紀錄。</p>
       </section>
     </div>
 
     <div id="pageChart" class="page-content">
       <h3 class="text-lg font-bold text-ink/80 mb-6 px-2">📊 支出分類統計</h3>
-      <div class="card-solid rounded-3xl p-6 shadow-soft">
+      <div class="card-solid rounded-[32px] p-6 shadow-soft">
         <div class="h-[300px] flex items-center justify-center">
           <canvas id="expensePieChart"></canvas>
         </div>
@@ -92,78 +95,78 @@
 
     <div id="pageAdd" class="page-content">
       <h3 class="text-lg font-bold text-berry mb-6 px-2">🍓 新增記錄</h3>
-      <div class="card-solid rounded-3xl p-6 shadow-soft space-y-6">
+      <div class="card-solid rounded-[32px] p-6 shadow-soft space-y-6">
         <div class="grid grid-cols-3 gap-3">
-          <button id="btnIncome" class="py-3 rounded-xl bg-milk text-sm border border-pastel text-ink">💗 收入</button>
-          <button id="btnExpense" class="py-3 rounded-xl bg-milk text-sm border border-pastel text-ink">🧾 支出</button>
-          <button id="btnSaving" class="py-3 rounded-xl bg-milk text-sm border border-pastel text-ink">🐷 儲蓄</button>
+          <button id="btnIncome" class="py-3 rounded-2xl bg-milk text-sm border border-blush text-ink">💗 收入</button>
+          <button id="btnExpense" class="py-3 rounded-2xl bg-milk text-sm border border-blush text-ink">🧾 支出</button>
+          <button id="btnSaving" class="py-3 rounded-2xl bg-milk text-sm border border-blush text-ink">🐷 儲蓄</button>
         </div>
         <form id="entryForm" class="space-y-5">
           <div class="flex flex-col gap-4">
-            <input id="amountInput" type="text" inputmode="decimal" class="box-border w-full bg-milk/50 px-4 py-4 rounded-2xl border border-pastel text-[18px] font-semibold outline-none focus:bg-white focus:border-berry/50 transition-all" placeholder="金額 (支援 100+200)" />
-            <input id="dateInput" type="date" class="box-border w-full bg-milk/50 px-4 py-4 rounded-2xl border border-pastel text-[16px] outline-none focus:bg-white appearance-none" />
+            <input id="amountInput" type="text" inputmode="search" class="box-border w-full bg-milk/50 px-5 py-4 rounded-[20px] border border-blush text-[20px] font-bold text-berry outline-none focus:bg-white transition-all" placeholder="金額 (支援 100+200)" />
+            <input id="dateInput" type="date" class="box-border w-full bg-milk/50 px-5 py-4 rounded-[20px] border border-blush text-[16px] outline-none focus:bg-white appearance-none" />
           </div>
           <div id="expenseCategoryBlock" class="hidden space-y-4">
             <div id="mainCategoryButtons" class="grid grid-cols-4 gap-2 text-xs"></div>
-            <div id="subCategoryButtons" class="grid grid-cols-4 gap-2 text-xs hidden pt-4 border-t border-pastel/40"></div>
+            <div id="subCategoryButtons" class="grid grid-cols-4 gap-2 text-xs hidden pt-4 border-t border-blush/30"></div>
           </div>
-          <input id="noteInput" type="text" class="box-border w-full bg-milk/50 px-4 py-4 rounded-2xl border border-pastel text-[16px] outline-none focus:bg-white transition-all" placeholder="備註 (可留白)" />
-          <button type="submit" class="w-full py-4 bg-berry text-white rounded-2xl text-md shadow-float font-medium">＋ 加入紀錄</button>
+          <input id="noteInput" type="text" class="box-border w-full bg-milk/50 px-5 py-4 rounded-[20px] border border-blush text-[16px] outline-none focus:bg-white transition-all" placeholder="備註 (可留白)" />
+          <button type="submit" class="w-full py-4 bg-berry text-white rounded-[20px] text-md shadow-float font-bold active:scale-95 transition-transform">＋ 加入紀錄</button>
         </form>
       </div>
     </div>
 
     <div id="pageNotes" class="page-content">
       <h3 class="text-lg font-bold text-berry mb-6 px-2">📒 待繳清單</h3>
-      <div class="card-solid rounded-3xl p-5 shadow-soft flex-grow flex flex-col overflow-hidden mb-20">
-        <div class="flex px-10 mb-2 text-[10px] text-slate-400 uppercase tracking-widest">
+      <div class="card-solid rounded-[32px] p-5 shadow-soft flex-grow flex flex-col overflow-hidden mb-20">
+        <div class="flex px-10 mb-2 text-[10px] text-ink/30 uppercase tracking-widest font-bold">
             <span class="flex-1">項目名稱</span>
             <span class="w-[80px] text-right">預計金額</span>
         </div>
-        <div id="billList" class="overflow-y-auto hide-scrollbar space-y-1 mb-4"></div>
-        <button id="addBillBtn" class="w-full py-4 border border-dashed border-pastel text-ink/40 rounded-2xl text-sm font-medium bg-milk active:bg-milk2 transition-colors mt-auto">＋ 新增一列項目</button>
+        <div id="billList" class="overflow-y-auto hide-scrollbar space-y-1 mb-4 px-1"></div>
+        <button id="addBillBtn" class="w-full py-4 border-2 border-dashed border-blush text-berry/60 rounded-[20px] text-sm font-bold bg-milk active:bg-milk2 transition-colors mt-auto">＋ 新增一列項目</button>
       </div>
     </div>
 
     <div id="pageCalc" class="page-content">
       <h3 class="text-lg font-bold text-ink/80 mb-6 px-2">🌸 小計算機</h3>
-      <div class="card-solid rounded-3xl p-5 shadow-soft">
-        <div class="bg-milk rounded-2xl p-5 mb-6 text-right border border-pastel">
-          <div id="calcHistory" class="text-xs text-slate-400 min-h-[16px] mb-1"></div>
-          <div id="calcDisplay" class="text-3xl font-bold text-ink truncate">0</div>
+      <div class="card-solid rounded-[32px] p-5 shadow-soft">
+        <div class="bg-milk2/50 rounded-[24px] p-6 mb-6 text-right border border-blush">
+          <div id="calcHistory" class="text-[10px] text-ink/30 min-h-[16px] mb-1"></div>
+          <div id="calcDisplay" class="text-4xl font-bold text-berry truncate">0</div>
         </div>
         <div class="grid grid-cols-4 gap-3" id="calcKeypad">
-          <button class="bg-milk2 text-ink py-5 rounded-2xl text-xl" data-val="C">C</button>
-          <button class="bg-milk2 text-ink py-5 rounded-2xl text-xl" data-val="DEL">⌫</button>
-          <button class="bg-milk2 text-ink py-5 rounded-2xl text-xl" data-val="%">%</button>
-          <button class="bg-pastel text-ink/70 py-5 rounded-2xl text-xl" data-val="/">÷</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val="7">7</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val="8">8</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val="9">9</button>
-          <button class="bg-pastel text-ink/70 py-5 rounded-2xl text-xl" data-val="*">×</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val="4">4</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val="5">5</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val="6">6</button>
-          <button class="bg-pastel text-ink/70 py-5 rounded-2xl text-xl" data-val="-">-</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val="1">1</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val="2">2</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val="3">3</button>
-          <button class="bg-pastel text-ink/70 py-5 rounded-2xl text-xl" data-val="+">+</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm col-span-2" data-val="0">0</button>
-          <button class="bg-white text-ink border border-pastel/20 py-5 rounded-2xl text-xl shadow-sm" data-val=".">.</button>
-          <button class="bg-berry text-white py-5 rounded-2xl text-xl shadow-float font-medium" data-val="=">=</button>
+          <button class="bg-white text-ink py-5 rounded-2xl text-xl shadow-sm border border-blush/20" data-val="C">C</button>
+          <button class="bg-white text-ink py-5 rounded-2xl text-xl shadow-sm border border-blush/20" data-val="DEL">⌫</button>
+          <button class="bg-white text-ink py-5 rounded-2xl text-xl shadow-sm border border-blush/20" data-val="%">%</button>
+          <button class="bg-blush text-berry py-5 rounded-2xl text-xl font-bold" data-val="/">÷</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val="7">7</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val="8">8</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val="9">9</button>
+          <button class="bg-blush text-berry py-5 rounded-2xl text-xl font-bold" data-val="*">×</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val="4">4</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val="5">5</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val="6">6</button>
+          <button class="bg-blush text-berry py-5 rounded-2xl text-xl font-bold" data-val="-">-</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val="1">1</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val="2">2</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val="3">3</button>
+          <button class="bg-blush text-berry py-5 rounded-2xl text-xl font-bold" data-val="+">+</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm col-span-2" data-val="0">0</button>
+          <button class="bg-white text-ink border border-blush/10 py-5 rounded-2xl text-xl shadow-sm" data-val=".">.</button>
+          <button class="bg-berry text-white py-5 rounded-2xl text-xl shadow-float font-bold" data-val="=">=</button>
         </div>
       </div>
     </div>
 
   </div>
 
-  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-white border-t border-pastel/40 rounded-t-[40px] pb-8 pt-3 px-8 flex justify-between z-40 shadow-[0_-5px_25px_rgba(0,0,0,0.03)]">
-    <button onclick="switchTab('Home')" id="navHome" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-60 nav-active"><span class="text-2xl">🏠</span></button>
-    <button onclick="switchTab('Chart')" id="navChart" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-60"><span class="text-2xl">🍪</span></button>
-    <button onclick="switchTab('Add')" id="navAdd" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-60"><span class="text-2xl">✏️</span></button>
-    <button onclick="switchTab('Notes')" id="navNotes" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-60"><span class="text-2xl">📒</span></button>
-    <button onclick="switchTab('Calc')" id="navCalc" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-60"><span class="text-2xl">🐥</span></button>
+  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-white border-t border-blush/30 rounded-t-[40px] pb-8 pt-3 px-8 flex justify-between z-40 shadow-[0_-5px_25px_rgba(255,183,206,0.1)]">
+    <button onclick="switchTab('Home')" id="navHome" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-40 nav-active"><span class="text-2xl">🏠</span></button>
+    <button onclick="switchTab('Chart')" id="navChart" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-40"><span class="text-2xl">🍪</span></button>
+    <button onclick="switchTab('Add')" id="navAdd" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-40"><span class="text-2xl">✏️</span></button>
+    <button onclick="switchTab('Notes')" id="navNotes" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-40"><span class="text-2xl">📒</span></button>
+    <button onclick="switchTab('Calc')" id="navCalc" class="flex flex-col items-center p-3 rounded-2xl transition-all grayscale opacity-40"><span class="text-2xl">🐥</span></button>
   </nav>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -184,7 +187,9 @@
 
     const STORAGE_KEY = "cute-book-entries-v2", FIXED_BILLS_KEY = "cute-fixed-bills-v3";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec';
-    const chartColors = ['#B5838D', '#95AFBA', '#B7B7A4', '#D4A373', '#6D6875', '#A5A5A5', '#E5989B', '#FFB4A2', '#84A59D', '#CB997E'];
+    
+    // 圖表顏色也換成粉嫩系
+    const chartColors = ['#FFB7CE', '#FFD1DC', '#A2D2FF', '#BDE0FE', '#FFC8DD', '#FFAFCC', '#CDB4DB', '#E9C46A', '#F4A261', '#E76F51'];
 
     let entries = [], fixedBills = [], selectedType = null, selectedMainCategory = null, selectedSubCategory = null, pieChart = null;
 
@@ -225,14 +230,15 @@
       document.getElementById("sumSaving").textContent = "$"+sav.toLocaleString();
       document.getElementById("sumBalance").textContent = "$"+(inc - exp - sav).toLocaleString();
       document.getElementById("recordCount").textContent = `共 ${list.length} 筆`;
+      
       const listEl = document.getElementById("mobileList");
       listEl.innerHTML = "";
       document.getElementById("emptyHint").classList.toggle("hidden", list.length > 0);
       list.forEach(e => {
         const card = document.createElement("div"); 
-        card.className = "bg-white border border-pastel/30 rounded-2xl p-3 text-sm shadow-sm";
-        const badge = e.type==='income' ? 'bg-success/10 text-success' : (e.type==='saving' ? 'bg-ink/5 text-ink/60' : 'bg-berry/10 text-berry');
-        card.innerHTML = `<div class="flex justify-between items-start"><div><span class="px-2 py-0.5 rounded-md text-[10px] ${badge} border border-pastel/20">${e.type==='income'?'收入':(e.type==='saving'?'儲蓄':'支出')}</span> <span class="font-medium text-ink ml-1">${e.mainCategory||''} ${e.subCategory||''}</span><p class="text-[10px] text-slate-400 mt-1">${e.date} ${e.note ? '· '+e.note : ''}</p></div><div class="text-right"><p class="font-bold text-ink">$${e.amount.toLocaleString()}</p><button onclick="deleteEntry('${e.id}')" class="text-[10px] text-slate-300 mt-1">刪除</button></div></div>`;
+        card.className = "bg-white border border-blush/30 rounded-2xl p-3 text-sm shadow-sm";
+        const badge = e.type==='income' ? 'bg-success/10 text-success' : (e.type==='saving' ? 'bg-ink/5 text-ink/40' : 'bg-berry/10 text-berry');
+        card.innerHTML = `<div class="flex justify-between items-start"><div><span class="px-2 py-0.5 rounded-md text-[10px] ${badge} border border-blush/20">${e.type==='income'?'收入':(e.type==='saving'?'儲蓄':'支出')}</span> <span class="font-medium text-ink ml-1">${e.mainCategory||''} ${e.subCategory||''}</span><p class="text-[10px] text-ink/30 mt-1">${e.date} ${e.note ? '· '+e.note : ''}</p></div><div class="text-right"><p class="font-bold text-ink">$${e.amount.toLocaleString()}</p><button onclick="deleteEntry('${e.id}')" class="text-[10px] text-ink/20 mt-1">刪除</button></div></div>`;
         listEl.appendChild(card);
       });
     }
@@ -253,7 +259,7 @@
       const box = document.getElementById("mainCategoryButtons"); box.innerHTML = "";
       Object.keys(categoryData).forEach(cat => {
         const btn = document.createElement("button");
-        btn.className = "py-2 px-1 bg-milk text-ink rounded-xl text-[11px] truncate border border-pastel/40";
+        btn.className = "py-2 px-1 bg-milk text-ink rounded-xl text-[11px] truncate border border-blush/40";
         btn.textContent = cat;
         btn.onclick = (ev) => {
           ev.preventDefault(); selectedMainCategory = cat; selectedSubCategory = categoryData[cat][0];
@@ -269,7 +275,7 @@
       const subBox = document.getElementById("subCategoryButtons"); subBox.innerHTML = ""; subBox.classList.remove("hidden");
       categoryData[mainCat].forEach(sub => {
         const btn = document.createElement("button");
-        btn.className = "py-2 px-1 bg-milk text-ink rounded-xl text-[11px] truncate border border-pastel/40";
+        btn.className = "py-2 px-1 bg-milk text-ink rounded-xl text-[11px] truncate border border-blush/40";
         btn.textContent = sub;
         btn.onclick = (ev) => {
           ev.preventDefault(); selectedSubCategory = sub;
@@ -280,6 +286,7 @@
       });
     }
 
+    // 支援運算的魔法
     function safeCalculate(expression) {
         if(!expression) return "";
         let str = expression.toString().replace(/×/g, '*').replace(/÷/g, '/');
@@ -306,34 +313,32 @@
       try { await fetch(SCRIPT_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: 'DELETE', id: id }) }); } catch(err) {}
     };
 
-    // --- 待繳筆記核心 (支援加減魔法) ---
+    // --- 待繳筆記 (支援雙欄運算) ---
     function renderFixedBills() {
       const billListEl = document.getElementById("billList");
       billListEl.innerHTML = "";
-      if (fixedBills.length === 0) { billListEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">點下方新增待繳項目 ✨</p>`; return; }
+      if (fixedBills.length === 0) { billListEl.innerHTML = `<p class="text-xs text-ink/20 text-center py-8">點下方新增待繳項目 ✨</p>`; return; }
       fixedBills.forEach((b, i) => {
         const div = document.createElement("div");
-        div.className = "flex items-center gap-2 py-3 border-b border-pastel/30 px-2";
+        div.className = "flex items-center gap-2 py-3 border-b border-blush/30 px-2";
         div.innerHTML = `
           <input type="checkbox" class="custom-checkbox flex-shrink-0" ${b.done ? "checked" : ""} onchange="checkBill(${i})" />
-          <div class="flex-1 flex items-center bg-milk/30 rounded-lg px-2 border border-pastel/10">
+          <div class="flex-1 flex items-center bg-white rounded-xl px-3 py-1 border border-blush/10">
             <input type="text" class="bill-input-name ${b.done ? 'bill-done' : ''}" value="${b.name || ''}" onblur="updateBill(${i}, 'name', this.value)" placeholder="內容..." />
-            <span class="text-slate-300 mx-1">|</span>
-            <input type="text" inputmode="decimal" class="bill-input-amount ${b.done ? 'bill-done' : ''}" value="${b.amount || ''}" onblur="updateBill(${i}, 'amount', this.value)" placeholder="0" />
+            <span class="text-blush mx-1 opacity-50">|</span>
+            <input type="text" inputmode="search" class="bill-input-amount ${b.done ? 'bill-done' : ''}" value="${b.amount || ''}" onblur="updateBill(${i}, 'amount', this.value)" placeholder="0" />
           </div>
-          <button onclick="deleteBill(${i})" class="text-[10px] text-slate-300 px-1 flex-shrink-0">刪除</button>
+          <button onclick="deleteBill(${i})" class="text-[10px] text-ink/20 px-1 flex-shrink-0">刪除</button>
         `;
         billListEl.appendChild(div);
       });
     }
 
-    // 這裡加入了運算邏輯
     window.updateBill = (i, field, val) => { 
       let finalVal = val;
       if (field === 'amount') {
           finalVal = safeCalculate(val);
-          // 即時更新畫面上顯示的結果
-          renderFixedBills();
+          renderFixedBills(); // 即時更新運算結果
       }
       fixedBills[i][field] = finalVal; 
       localStorage.setItem(FIXED_BILLS_KEY, JSON.stringify(fixedBills)); 
@@ -353,7 +358,7 @@
       const ctx = document.getElementById("expensePieChart");
       const data = {}; list.filter(e => e.type==='expense').forEach(e => { if(e.mainCategory) data[e.mainCategory] = (data[e.mainCategory]||0) + e.amount; });
       if(pieChart) pieChart.destroy();
-      pieChart = new Chart(ctx, { type:'pie', data: { labels:Object.keys(data), datasets:[{ data:Object.values(data), backgroundColor: chartColors }] }, options: { plugins: { legend: { position:'bottom', labels: { font:{size:10}, color: '#4A4E69' } } } } });
+      pieChart = new Chart(ctx, { type:'pie', data: { labels:Object.keys(data), datasets:[{ data:Object.values(data), backgroundColor: chartColors }] }, options: { plugins: { legend: { position:'bottom', labels: { font:{size:10}, color: '#5E548E' } } } } });
     }
 
     document.getElementById("calcKeypad").onclick = (e) => {
