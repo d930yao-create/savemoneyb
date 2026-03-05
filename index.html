@@ -18,7 +18,7 @@
             sans: ['"Zen Maru Gothic"', 'sans-serif'], 
           },
           colors: {
-            milk: "#FFFDFB",          
+            milk: "#F9F6FA",          
             cardBg: "#FFFFFF",        
             lavenderSoft: "#F3EDF7",  
             lavenderBorder: "#E9E0EF",
@@ -46,17 +46,8 @@
     
     .card-solid { background: #FFFFFF !important; border: 1px solid #E9E0EF; }
 
-    /* 抽屜滑出動畫 (只保留給底部需要的視窗) */
     .slide-up-drawer { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    
-    /* 置中小視窗的彈出動畫 */
-    .pop-in { animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes popIn {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-
     button { -webkit-tap-highlight-color: transparent; }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -69,7 +60,6 @@
     
     .nav-active { background-color: #FFF9C4; opacity: 1 !important; transform: translateY(-2px); }
     
-    /* 懸浮計算機修正：拿掉 border，維持乾淨陰影 */
     #floatingCalc { 
         position: fixed; 
         bottom: 160px; 
@@ -84,7 +74,8 @@
         font-size: 32px; 
         cursor: pointer; 
         background-color: #FFF9C4; 
-        box-shadow: 0 6px 20px rgba(255, 77, 141, 0.15); 
+        border: 1px solid #E9E0EF; 
+        box-shadow: 0 6px 20px rgba(65, 56, 79, 0.15); 
         transition: transform 0.2s; 
     }
     #floatingCalc:active { transform: scale(0.9); }
@@ -144,10 +135,10 @@
       <div class="card-solid rounded-[32px] p-5 shadow-soft flex-grow flex flex-col overflow-hidden mb-4 pb-32">
         <div class="flex px-10 mb-3 text-sm text-ink/50 font-bold flex-shrink-0">
             <span class="flex-1">項目名稱</span>
-            <span class="w-[60px] text-right">預計金額</span>
+            <span class="w-[90px] text-right">預計金額</span>
         </div>
         <div id="billList" class="overflow-y-auto hide-scrollbar space-y-2 mb-4 px-1 flex-grow"></div>
-        <button id="addBillBtn" class="w-full py-4 border-2 border-dashed border-macaronPeach text-ink/70 rounded-[20px] text-base font-bold bg-milk active:bg-lavenderSoft transition-colors flex-shrink-0">＋ 新增一列項目</button>
+        <button id="addBillBtn" class="w-full py-4 border-2 border-dashed border-macaronPeach text-ink/70 rounded-[20px] text-base font-bold bg-milk active:bg-lavenderSoft transition-colors flex-shrink-0">➕ 新增項目</button>
       </div>
     </div>
     
@@ -161,31 +152,34 @@
     </div>
 
     <div id="pageAdd" class="page-content">
-      <h3 class="text-xl font-bold text-ink mb-6 px-2">🍓 新增記錄</h3>
-      <div class="card-solid rounded-[32px] p-6 shadow-soft space-y-6">
-        <div class="grid grid-cols-3 gap-3">
+      <h3 class="text-xl font-bold text-ink mb-6 px-2 flex-shrink-0">🍓 新增記錄</h3>
+      
+      <div class="card-solid rounded-[32px] p-6 shadow-soft flex-grow overflow-y-auto hide-scrollbar mb-28">
+        <div class="grid grid-cols-3 gap-3 mb-6">
           <button id="btnIncome" class="py-4 rounded-2xl bg-macaronTeal/30 text-base font-bold text-ink transition-colors">💗 收入</button>
           <button id="btnExpense" class="py-4 rounded-2xl bg-macaronRose text-base font-bold text-ink transition-colors shadow-sm">🧾 支出</button>
-          <button id="btnSaving" class="py-4 rounded-2xl bg-[#FFC36B]/30 text-base font-bold text-ink transition-colors">🐷 儲蓄</button>
+          <button id="btnSaving" class="py-4 rounded-2xl bg-macaronOrange/30 text-base font-bold text-ink transition-colors">🐷 儲蓄</button>
         </div>
-        <form id="entryForm" class="space-y-6">
-          <div class="flex flex-col gap-4">
+        
+        <form id="entryForm" class="space-y-6 pb-6"> <div class="flex flex-col gap-4">
             <input id="amountInput" type="number" inputmode="decimal" class="box-border w-full bg-lavenderSoft px-5 py-4 rounded-[20px] border-none text-[22px] font-bold text-rose outline-none focus:bg-lavenderBorder transition-all" placeholder="輸入金額" />
             <input id="dateInput" type="date" class="box-border w-full bg-lavenderSoft px-5 py-4 rounded-[20px] border-none text-[18px] text-ink font-bold outline-none focus:bg-lavenderBorder appearance-none" />
           </div>
+          
           <div id="expenseCategoryBlock" class="hidden space-y-4">
             <div id="mainCategoryButtons" class="grid grid-cols-4 gap-2"></div>
             <div id="subCategoryButtons" class="grid grid-cols-4 gap-2 hidden pt-4 border-t border-lavenderBorder"></div>
           </div>
+          
           <input id="noteInput" type="text" class="box-border w-full bg-lavenderSoft px-5 py-4 rounded-[20px] border-none text-[18px] font-bold text-ink outline-none focus:bg-lavenderBorder transition-all" placeholder="備註 (可留白)" />
           
-          <button type="submit" class="w-full py-5 bg-macaronPeach/90 text-rose rounded-[20px] text-lg shadow-float font-bold hover:bg-macaronPeach active:scale-95 transition-all">＋ 加入紀錄</button>
+          <button type="submit" class="w-full py-5 bg-rose text-white rounded-[20px] text-lg shadow-float font-bold active:scale-95 transition-transform">＋ 加入紀錄</button>
         </form>
       </div>
     </div>
   </div>
 
-  <div id="calcModal" class="fixed inset-0 bg-ink/40 z-[60] hidden flex-col justify-center items-center backdrop-blur-sm px-4" onclick="if(event.target==this) closeCalc()">
+  <div id="calcModal" class="fixed inset-0 bg-ink/50 z-[60] hidden flex-col justify-center items-center backdrop-blur-sm px-4" onclick="if(event.target==this) closeCalc()">
     <div class="bg-milk w-full max-w-[320px] rounded-[32px] p-5 shadow-2xl pop-in" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center mb-3">
         <h3 class="text-lg font-bold text-ink flex items-center gap-2">🌸 計算機</h3>
@@ -246,14 +240,14 @@
         "💰 薪水":[], "🎁 獎金":[], "📈 投資":[], "👾 遊戲":[], "🧧 其他":[]
       },
       saving: {
-        "🐷 存錢":[], "🎯 基金":[], "📈 股票":[], "💖 其他":[]
+        "🐷 存錢筒":[], "🎯 夢想基金":[], "📈 股票":[], "💖 其他":[]
       }
     };
 
     const STORAGE_KEY = "cute-book-entries-v2", FIXED_BILLS_KEY = "cute-fixed-bills-v3";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec';
     
-    const chartColors = ['#FFE3EE', '#CDEAE7', '#FFC36B', '#F9E5DC', '#FF4D8D', '#FFF0F5', '#E9E0EF'];
+    const chartColors = ['#f5ccde', '#B2DFDB', '#FFD180', '#FFCCBC', '#FF4D8D', '#F3EDF7', '#F9E5DC', '#CDEAE7'];
 
     let entries = [], fixedBills = [], selectedType = null, selectedMainCategory = null, selectedSubCategory = null, pieChart = null;
 
@@ -317,7 +311,7 @@
             badgeStr = '<span class="px-3 py-1.5 rounded-lg text-sm bg-macaronTeal text-ink font-bold">收入</span>';
             amountColor = "text-happyOrange font-bold text-xl"; 
         } else if (e.type === 'saving') {
-            badgeStr = '<span class="px-3 py-1.5 rounded-lg text-sm bg-[#FFC36B] text-ink font-bold">儲蓄</span>';
+            badgeStr = '<span class="px-3 py-1.5 rounded-lg text-sm bg-macaronOrange text-ink font-bold">儲蓄</span>';
             amountColor = "text-ink font-bold text-xl"; 
         } else {
             badgeStr = '<span class="px-3 py-1.5 rounded-lg text-sm bg-macaronRose text-ink font-bold">支出</span>';
@@ -353,7 +347,7 @@
       
       if(type === 'income') activeBtn.className = "py-4 rounded-2xl bg-macaronTeal text-base font-bold text-ink transition-colors shadow-sm";
       if(type === 'expense') activeBtn.className = "py-4 rounded-2xl bg-macaronRose text-base font-bold text-ink transition-colors shadow-sm";
-      if(type === 'saving') activeBtn.className = "py-4 rounded-2xl bg-[#FFC36B] text-base font-bold text-ink transition-colors shadow-sm";
+      if(type === 'saving') activeBtn.className = "py-4 rounded-2xl bg-macaronOrange text-base font-bold text-ink transition-colors shadow-sm";
       
       renderCategories();
     }
@@ -379,7 +373,7 @@
           
           Array.from(box.children).forEach(b => b.className = "py-3 px-1 bg-lavenderSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors");
           
-          const activeColor = selectedType === 'income' ? 'bg-macaronTeal' : (selectedType === 'saving' ? 'bg-[#FFC36B]' : 'bg-macaronRose');
+          const activeColor = selectedType === 'income' ? 'bg-macaronTeal' : (selectedType === 'saving' ? 'bg-macaronOrange' : 'bg-macaronRose');
           btn.className = `py-3 px-1 ${activeColor} text-ink rounded-xl text-base font-bold border border-transparent truncate transition-colors shadow-sm`;
         };
         box.appendChild(btn);
@@ -400,7 +394,7 @@
           ev.preventDefault(); selectedSubCategory = sub;
           Array.from(subBox.children).forEach(b => b.className = "py-3 px-1 bg-lavenderSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors");
           
-          const activeColor = selectedType === 'income' ? 'bg-macaronTeal' : (selectedType === 'saving' ? 'bg-[#FFC36B]' : 'bg-macaronRose');
+          const activeColor = selectedType === 'income' ? 'bg-macaronTeal' : (selectedType === 'saving' ? 'bg-macaronOrange' : 'bg-macaronRose');
           btn.className = `py-3 px-1 ${activeColor} text-ink rounded-xl text-base font-bold border border-transparent truncate transition-colors shadow-sm`;
         };
         subBox.appendChild(btn);
