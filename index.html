@@ -15,17 +15,18 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Zen Maru Gothic"', 'sans-serif'], // 全面套用圓體
+            sans: ['"Zen Maru Gothic"', 'sans-serif'], 
           },
           colors: {
-            milk: "#FFFDFB",        // 乾淨奶油底
-            macaronTeal: "#B2DFDB", // 馬卡龍薄荷綠 (收入)
-            macaronRose: "#f5ccde", // 馬卡龍玫瑰粉 (支出)
-            macaronOrange: "#FFD180", // 馬卡龍夕陽橘 (儲蓄)
-            macaronPeach: "#FFCCBC",  // 馬卡龍甜杏粉 (餘額/待繳)
-            navYellow: "#FFF9C4",   // 嫩黃色 (導覽列底色)
-            rose: "#FF4D8D",        // 重點亮粉色 (文字強調)
-            ink: "#3D3D3D"          // 圓潤深灰字體
+            milk: "#FFFDFB",        
+            macaronTeal: "#B2DFDB", 
+            macaronRose: "#f5ccde", 
+            macaronOrange: "#FFD180", 
+            macaronPeach: "#FFCCBC",  
+            navYellow: "#FFF9C4",   
+            rose: "#FF4D8D",        
+            ink: "#3D3D3D",
+            happyOrange: "#FF9800"  // 新增：專屬收入的快樂亮橘色
           },
           boxShadow: { 
             soft: "0 4px 15px 0 rgba(0,0,0,0.03)", 
@@ -40,7 +41,6 @@
     .page-content { display: none; height: 100%; }
     .page-content.active { display: flex; flex-direction: column; }
     
-    /* 卡片回歸純白，讓馬卡龍色塊在裡面跳躍 */
     .card-solid { background: #FFFFFF !important; border: 1px solid #FFF0F6; }
 
     .slide-up-drawer { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -55,10 +55,8 @@
     .bill-input-name { background: transparent; border: none; width: 100%; font-size: 16px; color: #3D3D3D; outline: none; }
     .bill-input-amount { background: transparent; border: none; width: 80px; font-size: 16px; color: #FF4D8D; outline: none; text-align: right; font-weight: 700; }
     
-    /* 導覽列：點擊變成嫩黃色底 */
     .nav-active { background-color: #FFF9C4; opacity: 1 !important; transform: translateY(-2px); }
     
-    /* 懸浮計算機 */
     #floatingCalc { position: fixed; bottom: 115px; right: 20px; z-index: 50; width: 56px; height: 56px; border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; transition: transform 0.2s; }
     #floatingCalc:active { transform: scale(0.9); }
   </style>
@@ -203,7 +201,6 @@
     const STORAGE_KEY = "cute-book-entries-v2", FIXED_BILLS_KEY = "cute-fixed-bills-v3";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyePbfCt3HsLD-cKRqZfREIsB07FGiecvFiPiXpGMVHWAdC0_JgmOW0OzvRXlzXqFV4/exec';
     
-    // 圓餅圖顏色搭配馬卡龍色系
     const chartColors = ['#f5ccde', '#B2DFDB', '#FFD180', '#FFCCBC', '#FF4D8D', '#FFE3EE', '#F9E5DC', '#CDEAE7'];
 
     let entries = [], fixedBills = [], selectedType = null, selectedMainCategory = null, selectedSubCategory = null, pieChart = null;
@@ -214,9 +211,7 @@
     function switchTab(tabName) {
       document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
       document.getElementById('page' + tabName).classList.add('active');
-      // 切換時移除嫩黃色背景
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
-      // 為當前點擊的按鈕加上嫩黃色背景
       document.getElementById('nav' + tabName).classList.add('nav-active');
       if(tabName === 'Chart') renderPieChart(entries.filter(e => e.date && e.date.startsWith(document.getElementById("monthFilter").value)));
     }
@@ -261,18 +256,38 @@
       document.getElementById("emptyHint").classList.toggle("hidden", list.length > 0);
       list.forEach(e => {
         const card = document.createElement("div"); 
-        card.className = "bg-white border border-gray-100 rounded-2xl p-3 text-sm shadow-sm mb-2";
+        card.className = "bg-white border border-gray-100 rounded-2xl p-3 shadow-sm mb-3"; // 增加一點下邊距
         
         let badgeStr = "";
-        let amountColor = "text-ink";
-        if (e.type === 'income') badgeStr = '<span class="px-2 py-0.5 rounded-md text-[10px] bg-macaronTeal text-ink font-bold">收入</span>';
-        else if (e.type === 'saving') badgeStr = '<span class="px-2 py-0.5 rounded-md text-[10px] bg-macaronOrange text-ink font-bold">儲蓄</span>';
-        else {
-            badgeStr = '<span class="px-2 py-0.5 rounded-md text-[10px] bg-macaronRose text-ink font-bold">支出</span>';
-            amountColor = "text-rose font-bold";
+        // 預設字體大小設定為 18px，讓數字更清楚
+        let amountColor = "text-ink font-bold text-[18px]"; 
+        
+        // 針對不同類型設定專屬顏色與標籤
+        if (e.type === 'income') {
+            badgeStr = '<span class="px-2.5 py-1 rounded-md text-[11px] bg-macaronTeal text-ink font-bold">收入</span>';
+            amountColor = "text-happyOrange font-bold text-[18px]"; // 收入專屬亮橘色
+        } else if (e.type === 'saving') {
+            badgeStr = '<span class="px-2.5 py-1 rounded-md text-[11px] bg-macaronOrange text-ink font-bold">儲蓄</span>';
+            amountColor = "text-ink font-bold text-[18px]"; // 儲蓄維持深灰
+        } else {
+            badgeStr = '<span class="px-2.5 py-1 rounded-md text-[11px] bg-macaronRose text-ink font-bold">支出</span>';
+            amountColor = "text-rose font-bold text-[18px]"; // 支出維持亮粉色
         }
         
-        card.innerHTML = `<div class="flex justify-between items-start"><div>${badgeStr} <span class="font-bold text-ink ml-1">${e.mainCategory||''} ${e.subCategory||''}</span><p class="text-[10px] text-ink/50 mt-1 font-medium">${e.date} ${e.note ? '· '+e.note : ''}</p></div><div class="text-right"><p class="${amountColor}">$${e.amount.toLocaleString()}</p><button onclick="deleteEntry('${e.id}')" class="text-[10px] text-ink/30 mt-1 hover:text-rose font-bold">刪除</button></div></div>`;
+        // 放大分類字體 (16px) 與 日期備註字體 (12px)
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              ${badgeStr} 
+              <span class="font-bold text-ink ml-2 text-[16px]">${e.mainCategory||''} ${e.subCategory||''}</span>
+              <p class="text-[12px] text-ink/50 mt-1.5 font-medium">${e.date} ${e.note ? '· '+e.note : ''}</p>
+            </div>
+            <div class="text-right">
+              <p class="${amountColor}">$${e.amount.toLocaleString()}</p>
+              <button onclick="deleteEntry('${e.id}')" class="text-[11px] text-ink/30 mt-1 hover:text-rose font-bold">刪除</button>
+            </div>
+          </div>
+        `;
         listEl.appendChild(card);
       });
     }
