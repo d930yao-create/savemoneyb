@@ -75,7 +75,7 @@
         z-index: 50; 
         width: 60px; 
         height: 60px; 
-        border-radius: 0px; 
+        border-radius: 30px; 
         display: flex; 
         align-items: center; 
         justify-content: center; 
@@ -98,7 +98,7 @@
       <section class="card-solid rounded-[32px] p-5 flex-shrink-0 shadow-soft mb-4">
         <div class="flex justify-between items-center mb-4">
           <h1 class="text-xl font-bold text-ink">✨ 本月總覽</h1>
-          <input id="monthFilter" type="month" class="px-3 py-1 bg-lavenderSoft rounded-xl border border-lavenderBorder text-sm text-ink outline-none appearance-none font-bold" />
+          <input id="monthFilter" type="month" class="px-3 py-1 bg-orangeSoft rounded-xl border border-lavenderBorder text-sm text-ink outline-none appearance-none font-bold" />
         </div>
         
         <div class="flex justify-between items-center gap-3 mb-4">
@@ -145,7 +145,7 @@
             <span class="w-[90px] text-right">預計金額</span>
         </div>
         <div id="billList" class="overflow-y-auto hide-scrollbar space-y-2 mb-4 px-1 flex-grow pb-10"></div>
-        <button id="addBillBtn" class="w-full py-4 border-2 border-dashed border-macaronPeach text-ink/70 rounded-[20px] text-base font-bold bg-milk active:bg-lavenderSoft transition-colors flex-shrink-0">➕ 新增項目</button>
+        <button id="addBillBtn" class="w-full py-4 border-2 border-dashed border-macaronPeach text-ink/70 rounded-[20px] text-base font-bold bg-milk active:bg-orangeSoft transition-colors flex-shrink-0">➕ 新增項目</button>
       </div>
     </div>
     
@@ -170,8 +170,8 @@
         
         <form id="entryForm" class="space-y-6 pb-24">
           <div class="flex flex-col gap-4">
-            <input id="amountInput" type="number" inputmode="decimal" class="box-border w-full bg-lavenderSoft px-5 py-4 rounded-[20px] border-none text-[22px] font-bold text-rose outline-none focus:bg-lavenderBorder transition-all" placeholder="輸入金額" />
-            <input id="dateInput" type="date" class="box-border w-full bg-lavenderSoft px-5 py-4 rounded-[20px] border-none text-[18px] text-ink font-bold outline-none focus:bg-lavenderBorder appearance-none" />
+            <input id="amountInput" type="number" inputmode="decimal" class="box-border w-full bg-orangeSoft px-5 py-4 rounded-[20px] border-none text-[22px] font-bold text-rose outline-none focus:bg-lavenderBorder transition-all" placeholder="輸入金額" />
+            <input id="dateInput" type="date" class="box-border w-full bg-orangeSoft px-5 py-4 rounded-[20px] border-none text-[18px] text-ink font-bold outline-none focus:bg-lavenderBorder appearance-none" />
           </div>
           
           <div id="expenseCategoryBlock" class="hidden space-y-4">
@@ -179,7 +179,7 @@
             <div id="subCategoryButtons" class="grid grid-cols-4 gap-2 hidden pt-4 border-t border-lavenderBorder"></div>
           </div>
           
-          <input id="noteInput" type="text" class="box-border w-full bg-lavenderSoft px-5 py-4 rounded-[20px] border-none text-[18px] font-bold text-ink outline-none focus:bg-lavenderBorder transition-all" placeholder="備註 (可留白)" />
+          <input id="noteInput" type="text" class="box-border w-full bg-orangeSoft px-5 py-4 rounded-[20px] border-none text-[18px] font-bold text-ink outline-none focus:bg-lavenderBorder transition-all" placeholder="備註 (可留白)" />
           
           <button type="submit" class="w-full py-5 bg-rose/90 text-white rounded-[20px] text-lg shadow-float font-bold hover:bg-rose active:scale-95 transition-all">＋ 加入紀錄</button>
         </form>
@@ -198,9 +198,9 @@
         <div id="calcDisplay" class="text-3xl font-bold text-rose truncate">0</div>
       </div>
       <div class="grid grid-cols-4 gap-2.5" id="calcKeypad">
-        <button class="bg-lavenderSoft text-ink py-3.5 rounded-[16px] text-xl font-bold" data-val="C">C</button>
-        <button class="bg-lavenderSoft text-ink py-3.5 rounded-[16px] text-xl font-bold" data-val="DEL">⌫</button>
-        <button class="bg-lavenderSoft text-ink py-3.5 rounded-[16px] text-xl font-bold" data-val="%">%</button>
+        <button class="bg-orangeSoft text-ink py-3.5 rounded-[16px] text-xl font-bold" data-val="C">C</button>
+        <button class="bg-orangeSoft text-ink py-3.5 rounded-[16px] text-xl font-bold" data-val="DEL">⌫</button>
+        <button class="bg-orangeSoft text-ink py-3.5 rounded-[16px] text-xl font-bold" data-val="%">%</button>
         <button class="bg-macaronPeach text-ink py-3.5 rounded-[16px] text-xl font-bold" data-val="/">÷</button>
         <button class="bg-cardBg text-ink border border-lavenderBorder py-3.5 rounded-[16px] text-xl shadow-sm font-bold" data-val="7">7</button>
         <button class="bg-cardBg text-ink border border-lavenderBorder py-3.5 rounded-[16px] text-xl shadow-sm font-bold" data-val="8">8</button>
@@ -349,7 +349,7 @@
       
       ['btnIncome', 'btnExpense', 'btnSaving'].forEach(id => {
         const btn = document.getElementById(id);
-        btn.className = "py-4 rounded-2xl bg-lavenderSoft text-base font-bold text-ink/60 transition-colors";
+        btn.className = "py-4 rounded-2xl bg-orangeSoft text-base font-bold text-ink/60 transition-colors";
       });
       const activeBtn = document.getElementById(type==='income'?'btnIncome':(type==='expense'?'btnExpense':'btnSaving'));
       
@@ -366,7 +366,7 @@
       
       Object.keys(currentData).forEach(cat => {
         const btn = document.createElement("button");
-        btn.className = "py-3 px-1 bg-lavenderSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors";
+        btn.className = "py-3 px-1 bg-orangeSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors";
         btn.textContent = cat;
         btn.onclick = (ev) => {
           ev.preventDefault(); selectedMainCategory = cat;
@@ -379,7 +379,7 @@
               document.getElementById("subCategoryButtons").classList.add("hidden");
           }
           
-          Array.from(box.children).forEach(b => b.className = "py-3 px-1 bg-lavenderSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors");
+          Array.from(box.children).forEach(b => b.className = "py-3 px-1 bg-orangeSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors");
           
           const activeColor = selectedType === 'income' ? 'bg-macaronTeal' : (selectedType === 'saving' ? 'bg-[#FFC36B]' : 'bg-macaronRose');
           btn.className = `py-3 px-1 ${activeColor} text-ink rounded-xl text-base font-bold border border-transparent truncate transition-colors shadow-sm`;
@@ -396,11 +396,11 @@
       
       currentData.forEach(sub => {
         const btn = document.createElement("button");
-        btn.className = "py-3 px-1 bg-lavenderSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors";
+        btn.className = "py-3 px-1 bg-orangeSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors";
         btn.textContent = sub;
         btn.onclick = (ev) => {
           ev.preventDefault(); selectedSubCategory = sub;
-          Array.from(subBox.children).forEach(b => b.className = "py-3 px-1 bg-lavenderSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors");
+          Array.from(subBox.children).forEach(b => b.className = "py-3 px-1 bg-orangeSoft text-ink/70 rounded-xl text-base font-bold border border-transparent truncate transition-colors");
           
           const activeColor = selectedType === 'income' ? 'bg-macaronTeal' : (selectedType === 'saving' ? 'bg-[#FFC36B]' : 'bg-macaronRose');
           btn.className = `py-3 px-1 ${activeColor} text-ink rounded-xl text-base font-bold border border-transparent truncate transition-colors shadow-sm`;
@@ -446,7 +446,7 @@
         div.className = "flex items-center gap-3 py-3 border-b border-lavenderBorder px-2";
         div.innerHTML = `
           <input type="checkbox" class="custom-checkbox flex-shrink-0" ${b.done ? "checked" : ""} onchange="checkBill(${i})" />
-          <div class="flex-1 flex items-center bg-lavenderSoft rounded-xl px-4 py-3">
+          <div class="flex-1 flex items-center bg-orangeSoft rounded-xl px-4 py-3">
             <input type="text" class="bill-input-name font-bold ${b.done ? 'bill-done' : ''}" value="${b.name || ''}" onblur="updateBill(${i}, 'name', this.value)" placeholder="內容..." />
             <span class="text-ink/20 mx-2">|</span>
             <input type="number" inputmode="decimal" class="bill-input-amount ${b.done ? 'bill-done' : ''}" value="${b.amount || ''}" onblur="updateBill(${i}, 'amount', this.value)" placeholder="0" />
