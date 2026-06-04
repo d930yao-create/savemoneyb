@@ -382,7 +382,7 @@
           
           const fiveMinsAgo = Date.now() - 5 * 60 * 1000;
           const localOnly = entries.filter(local => 
-            !cloudData.find(cloud => cloud.id === local.id) && 
+            !cloudData.find(cloud => String(cloud.id) === String(local.id)) && 
             parseInt(local.id) > fiveMinsAgo
           );
 
@@ -535,12 +535,18 @@
       switchTab('List'); 
       
       document.getElementById("amountInput").value = ""; document.getElementById("noteInput").value = "";
-      try { await fetch(SCRIPT_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(entry) }); await loadDataFromSheet(); } catch(err) {}
+      try { 
+        await fetch(SCRIPT_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(entry) }); 
+        // 稍微延遲 1 秒再重新載入雲端，讓資料庫完整寫入，完美搭配 ID 字串防重機制
+        setTimeout(async () => {
+          await loadDataFromSheet();
+        }, 1000);
+      } catch(err) {}
     };
 
     window.deleteEntry = async (id) => {
       if(!confirm("確定要刪除這筆紀錄嗎？")) return;
-      entries = entries.filter(e => e.id !== id); localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
+      entries = entries.filter(e => String(e.id) !== String(id)); localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
       render();
       if(document.getElementById('pageOverview').classList.contains('active')) {
           const currentMonth = document.querySelector(".month-filter").value;
