@@ -238,7 +238,7 @@
       </section>
     </div>
 
-    <div id="pageNotes" class="page-content">
+<div id="pageNotes" class="page-content">
       <div class="flex justify-between items-center mb-6 px-2">
           <h3 class="text-[20px] font-bold text-ink">📒 待繳清單</h3>
           <div class="bg-macaronRose px-4 py-2 rounded-2xl flex flex-col items-end">
@@ -254,8 +254,59 @@
         <button id="addBillBtn" class="w-full py-4 border-2 border-dashed border-lavenderBorder text-ink/60 rounded-[20px] text-[16px] font-medium bg-cardBg active:bg-orangeSoft transition-colors flex-shrink-0">➕ 新增項目</button>
       </div>
     </div>
+
+    <div id="pageAsset" class="page-content">
+      <div class="flex justify-between items-center mb-6 px-2">
+          <h3 class="text-[20px] font-bold text-ink">🏦 資產管理</h3>
+      </div>
+
+      <div class="card-solid rounded-[32px] p-6 shadow-soft flex-grow flex flex-col mb-20 overflow-y-auto hide-scrollbar">
+        <div class="text-center mb-6">
+          <p class="text-[14px] text-ink/60 font-medium mb-1">目前總資產</p>
+          <p id="totalAssetDisplay" class="text-[32px] font-bold text-rose mb-2">$0</p>
+          <div class="inline-block px-4 py-1.5 bg-orangeSoft rounded-full">
+            <span class="text-[14px] font-medium text-ink/80" id="assetDiffDisplay">與上次相比：$0</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 mb-8">
+          <div class="bg-macaronTeal rounded-2xl p-4 text-center">
+            <p class="text-[14px] text-ink/80 mb-1">投資</p>
+            <p id="assetInvest" class="text-[16px] font-bold text-ink">$0</p>
+          </div>
+          <div class="bg-macaronOrange rounded-2xl p-4 text-center">
+            <p class="text-[14px] text-ink/80 mb-1">存款</p>
+            <p id="assetDeposit" class="text-[16px] font-bold text-ink">$0</p>
+          </div>
+          <div class="bg-macaronRose rounded-2xl p-4 text-center">
+            <p class="text-[14px] text-ink/80 mb-1">其他</p>
+            <p id="assetOther" class="text-[16px] font-bold text-ink">$0</p>
+          </div>
+        </div>
+
+        <form id="assetForm" class="space-y-4 mt-auto">
+          <h4 class="text-[16px] font-bold text-ink mb-2">更新資產狀態</h4>
+          <input id="assetAmountInput" type="number" class="w-full bg-orangeSoft px-5 py-4 rounded-[20px] border-none text-[18px] font-bold text-rose outline-none focus:bg-lavenderBorder" placeholder="輸入目前總金額" />
+          
+          <div class="grid grid-cols-3 gap-2">
+            <label class="flex items-center justify-center p-3 bg-orangeSoft rounded-xl font-medium text-[14px] text-ink/70 has-[:checked]:bg-macaronTeal has-[:checked]:text-ink has-[:checked]:font-bold transition-all">
+              <input type="radio" name="assetType" value="invest" class="hidden" checked> 投資
+            </label>
+            <label class="flex items-center justify-center p-3 bg-orangeSoft rounded-xl font-medium text-[14px] text-ink/70 has-[:checked]:bg-macaronOrange has-[:checked]:text-ink has-[:checked]:font-bold transition-all">
+              <input type="radio" name="assetType" value="deposit" class="hidden"> 存款
+            </label>
+            <label class="flex items-center justify-center p-3 bg-orangeSoft rounded-xl font-medium text-[14px] text-ink/70 has-[:checked]:bg-macaronRose has-[:checked]:text-ink has-[:checked]:font-bold transition-all">
+              <input type="radio" name="assetType" value="other" class="hidden"> 其他
+            </label>
+          </div>
+          
+          <button type="button" onclick="saveAsset()" class="w-full py-4 mt-4 bg-ink/90 text-white rounded-[20px] text-[16px] font-bold hover:bg-ink active:scale-95 transition-all">更新紀錄</button>
+        </form>
+      </div>
+    </div>
     
-  </div>
+  </div> 
+
 
   <div id="calcModal" class="fixed inset-0 bg-ink/20 z-[60] hidden flex-col justify-center items-center backdrop-blur-sm px-4" onclick="if(event.target==this) closeCalc()">
     <div class="bg-cardBg w-full max-w-[320px] rounded-[32px] p-5 shadow-2xl pop-in border border-lavenderBorder" onclick="event.stopPropagation()">
@@ -301,11 +352,14 @@
     </div>
   </div>
 
+
+
   <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-cardBg border-t border-lavenderBorder rounded-t-[32px] pb-6 pt-3 px-8 flex justify-between z-40 shadow-soft">
     <button onclick="switchTab('Add')" id="navAdd" class="flex flex-col items-center p-3 rounded-2xl transition-all nav-active"><span class="text-2xl drop-shadow-sm">✏️</span></button>
     <button onclick="switchTab('Overview')" id="navOverview" class="flex flex-col items-center p-3 rounded-2xl transition-all"><span class="text-2xl drop-shadow-sm">💫</span></button>
     <button onclick="switchTab('List')" id="navList" class="flex flex-col items-center p-3 rounded-2xl transition-all"><span class="text-2xl drop-shadow-sm">📋</span></button>
     <button onclick="switchTab('Notes')" id="navNotes" class="flex flex-col items-center p-3 rounded-2xl transition-all"><span class="text-2xl drop-shadow-sm">📒</span></button>
+<button onclick="switchTab('Asset')" id="navAsset" class="flex flex-col items-center p-3 rounded-2xl transition-all"><span class="text-2xl drop-shadow-sm">🏦</span></button>
   </nav>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -344,7 +398,8 @@
     function openCalc() { document.getElementById('calcModal').classList.replace('hidden','flex'); }
     function closeCalc() { document.getElementById('calcModal').classList.replace('flex','hidden'); }
 
-    function switchTab(tabName) {
+function switchTab(tabName) {
+      const tabs = ['Add', 'Overview', 'List', 'Notes', 'Asset'];  
       document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
       document.getElementById('page' + tabName).classList.add('active');
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
@@ -661,6 +716,111 @@
 
     init();
     setupForm('expense');
+fetchAssetData();
+
+let currentAssets = { invest: 0, deposit: 0, other: 0, total: 0 };
+
+ 
+async function fetchAssetData() {
+  try {
+ 
+    const response = await fetch(SCRIPT_URL + "?type=asset");
+    const result = await response.json();
+    
+    if (result.status === 'success' && result.data) {
+      currentAssets = {
+        invest: Number(result.data.invest) || 0,
+        deposit: Number(result.data.deposit) || 0,
+        other: Number(result.data.other) || 0,
+        total: Number(result.data.total) || 0
+      };
+      updateAssetUI(Number(result.data.diff) || 0);
+    }
+  } catch (error) {
+    console.error("資產資料讀取失敗:", error);
+  }
+}
+
+// 2. 更新畫面顯示與顏色
+function updateAssetUI(diffAmount = 0) {
+  document.getElementById('totalAssetDisplay').textContent = `$${currentAssets.total.toLocaleString()}`;
+  document.getElementById('assetInvest').textContent = `$${currentAssets.invest.toLocaleString()}`;
+  document.getElementById('assetDeposit').textContent = `$${currentAssets.deposit.toLocaleString()}`;
+  document.getElementById('assetOther').textContent = `$${currentAssets.other.toLocaleString()}`;
+
+  const diffEl = document.getElementById('assetDiffDisplay');
+  const parent = diffEl.parentElement;
+  
+  // 清除舊顏色，根據增減換上新衣服
+  parent.classList.remove('bg-macaronRose', 'bg-macaronTeal', 'bg-orangeSoft');
+  
+  if (diffAmount > 0) {
+    diffEl.textContent = `與上次相比：+$${diffAmount.toLocaleString()}`;
+    parent.classList.add('bg-macaronRose'); // 賺錢顯示溫柔的湖水綠
+  } else if (diffAmount < 0) {
+    diffEl.textContent = `與上次相比：-$${Math.abs(diffAmount).toLocaleString()}`;
+    parent.classList.add('bg-macaronTeal'); // 減少顯示玫瑰粉
+  } else {
+    diffEl.textContent = `與上次相比：$0`;
+    parent.classList.add('bg-orangeSoft');  // 持平維持原本的暖橘色
+  }
+}
+
+
+async function saveAsset() {
+  const amountInput = document.getElementById('assetAmountInput').value;
+  if (!amountInput) {
+    alert('記得要輸入金額喔！');
+    return;
+  }
+
+
+  const btn = document.querySelector('#assetForm button');
+  const originalText = btn.textContent;
+  btn.textContent = "更新中...";
+  btn.disabled = true;
+
+  const newAmount = parseInt(amountInput, 10);
+  const type = document.querySelector('input[name="assetType"]:checked').value;
+
+
+  const newAssets = { ...currentAssets };
+  newAssets[type] = newAmount;
+  newAssets.total = newAssets.invest + newAssets.deposit + newAssets.other;
+
+
+  const diff = newAssets.total - currentAssets.total;
+
+  const payload = {
+    action: 'ASSET_UPDATE',
+    id: Date.now().toString(),
+    total: newAssets.total,
+    invest: newAssets.invest,
+    deposit: newAssets.deposit,
+    other: newAssets.other,
+    diff: diff
+  };
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+  method: 'POST',
+  body: JSON.stringify(payload)
+});
+    const result = await response.json();
+    
+    if (result.status === 'success') {
+      currentAssets = newAssets;
+      updateAssetUI(diff);
+      document.getElementById('assetAmountInput').value = ''; 
+      alert('資產更新成功囉 ✨');
+    }
+  } catch (error) {
+    alert('更新失敗，我們再試一次！');
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
   </script>
 </body>
 </html>
