@@ -287,6 +287,7 @@
         <form id="assetForm" class="space-y-4 mt-auto">
           <h4 class="text-[16px] font-bold text-ink mb-2">更新資產狀態</h4>
           <input id="assetAmountInput" type="number" inputmode="decimal" pattern="[0-9]*" class="w-full bg-orangeSoft px-5 py-4 rounded-[20px] border-none text-[18px] font-bold text-rose outline-none focus:bg-lavenderBorder" placeholder="輸入目前總金額" />
+
           
           <div class="grid grid-cols-3 gap-2">
             <label class="flex items-center justify-center p-3 bg-orangeSoft rounded-xl font-medium text-[14px] text-ink/70 has-[:checked]:bg-macaronTeal has-[:checked]:text-ink has-[:checked]:font-bold transition-all">
@@ -302,6 +303,23 @@
           
           <button type="button" onclick="saveAsset()" class="w-full py-4 mt-4 bg-ink/90 text-white rounded-[20px] text-[16px] font-bold hover:bg-ink active:scale-95 transition-all">更新紀錄</button>
         </form>
+
+<div class="bg-orangeSoft/50 rounded-2xl p-4 mb-6 border border-lavenderBorder">
+          <h4 class="text-[14px] font-bold text-ink/80 mb-4 text-center">資產成長軌跡</h4>
+          <div class="h-[180px] w-full flex items-center justify-center">
+            <canvas id="assetTrendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <div class="flex justify-between items-center mb-3 px-1">
+            <h4 class="text-[14px] font-bold text-ink/80">歷史紀錄</h4>
+          </div>
+          <div id="assetHistoryList" class="space-y-3 max-h-[200px] overflow-y-auto hide-scrollbar">
+            <p class="text-[14px] text-ink/40 text-center py-4 font-medium">載入中或是目前還沒有紀錄唷</p>
+          </div>
+        </div>
+
       </div>
     </div>
     
@@ -720,10 +738,92 @@ fetchAssetData();
 
 let currentAssets = { invest: 0, deposit: 0, other: 0, total: 0 };
 
+let assetChartInstance = null;
+let assetHistoryData = []; // 用來存放後端傳來的歷史陣列
+
+// 繪製溫柔質感的折線圖
+function renderAssetChart(historyArray) {
+  const ctx = document.getElementById("assetTrendChart");
+  if (!ctx) return;
+
+  // 準備圖表資料 (取最近 6 筆，並反轉讓時間由左至右)
+  const chartData = [...historyArray].slice(0, 6).reverse();
+  const labels = chartData.map(item => item.date || '未知');
+  const totals = chartData.map(item => item.total || 0);
+
+  if(assetChartInstance) assetChartInstance.destroy();
+
+  assetChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '總資產',
+        data: totals,
+        borderColor: '#F48FB1', // 玫瑰粉線條
+        backgroundColor: 'rgba(244, 143, 177, 0.1)', 
+        borderWidth: 3,
+        tension: 0.4, // 圓滑的曲線
+        fill: true,
+        pointBackgroundColor: '#FFFFFF',
+        pointBorderColor: '#F48FB1',
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: "'Zen Maru Gothic', sans-serif", size: 10 }, color: '#4E342E' } },
+        y: { grid: { color: '#F0EAF5' }, ticks: { font: { family: "'Zen Maru Gothic', sans-serif", size: 10 }, color: '#4E342E' } }
+      }
+    }
+  });
+}
+
+// 渲染清單
+function renderAssetHistoryList(historyArray) {
+  const listEl = document.getElementById("assetHistoryList");
+  listEl.innerHTML = "";
+
+  if (!historyArray || historyArray.length === 0) {
+    listEl.innerHTML = '<p class="text-[14px] text-ink/40 text-center py-4 font-medium">目前還沒有紀錄唷 ✨</p>';
+    return;
+  }
+
+  historyArray.forEach(record => {
+    const card = document.createElement("div");
+    card.className = "bg-white border border-lavenderBorder rounded-2xl p-3 shadow-sm flex justify-between items-center";
+    
+    // 判斷增減顏色
+    const diffVal = Number(record.diff) || 0;
+    let diffText = `$0`;
+    let diffColor = "text-ink/40";
+    if (diffVal > 0) {
+      diffText = `+$${diffVal.toLocaleString()}`;
+      diffColor = "text-macaronTeal font-bold text-ink"; // 增加用湖水綠字
+    } else if (diffVal < 0) {
+      diffText = `-$${Math.abs(diffVal).toLocaleString()}`;
+      diffColor = "text-rose font-bold"; // 減少用玫瑰粉字
+    }
+
+    card.innerHTML = `
+      <div>
+        <p class="text-[12px] text-ink/50 font-medium mb-1">${record.date || '未知時間'}</p>
+        <p class="text-[16px] font-bold text-ink">$${Number(record.total).toLocaleString()}</p>
+      </div>
+      <div class="text-right bg-orangeSoft px-3 py-1.5 rounded-xl">
+        <p class="text-[14px] ${diffColor}">${diffText}</p>
+      </div>
+    `;
+    listEl.appendChild(card);
+  });
+}
+
  
 async function fetchAssetData() {
   try {
- 
     const response = await fetch(SCRIPT_URL + "?type=asset");
     const result = await response.json();
     
@@ -735,6 +835,11 @@ async function fetchAssetData() {
         total: Number(result.data.total) || 0
       };
       updateAssetUI(Number(result.data.diff) || 0);
+
+      // --- 新增這兩行 ---
+      assetHistoryData = result.data.history || []; // 假設後端會傳 history 陣列回來
+      renderAssetChart(assetHistoryData);
+      renderAssetHistoryList(assetHistoryData);
     }
   } catch (error) {
     console.error("資產資料讀取失敗:", error);
