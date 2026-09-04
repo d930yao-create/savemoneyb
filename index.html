@@ -260,25 +260,28 @@
           </div>
         </div>
 
-        <form id="assetForm" class="space-y-4 mt-auto">
+<form id="assetForm" class="space-y-4 mt-auto">
           <h4 class="text-[16px] font-bold text-ink mb-2">更新資產狀態</h4>
-          <input id="assetAmountInput" type="number" inputmode="decimal" pattern="[0-9]*" class="w-full bg-orangeSoft px-5 py-4 rounded-[20px] border-none text-[18px] font-bold text-rose outline-none focus:bg-lavenderBorder" placeholder="輸入目前總金額" />
-
+          
+          <!-- 三個獨立輸入欄位 -->
           <div class="grid grid-cols-3 gap-2">
-            <label class="flex items-center justify-center p-3 bg-orangeSoft rounded-xl font-medium text-[14px] text-ink/70 has-[:checked]:bg-macaronTeal has-[:checked]:text-ink has-[:checked]:font-bold transition-all">
-              <input type="radio" name="assetType" value="invest" class="hidden" checked> 投資
-            </label>
-            <label class="flex items-center justify-center p-3 bg-orangeSoft rounded-xl font-medium text-[14px] text-ink/70 has-[:checked]:bg-macaronOrange has-[:checked]:text-ink has-[:checked]:font-bold transition-all">
-              <input type="radio" name="assetType" value="deposit" class="hidden"> 存款
-            </label>
-            <label class="flex items-center justify-center p-3 bg-orangeSoft rounded-xl font-medium text-[14px] text-ink/70 has-[:checked]:bg-macaronRose has-[:checked]:text-ink has-[:checked]:font-bold transition-all">
-              <input type="radio" name="assetType" value="other" class="hidden"> 其他
-            </label>
+            <div class="bg-orangeSoft p-3 rounded-2xl">
+              <label class="block text-[12px] text-ink/70 mb-1 font-medium">投資</label>
+              <input id="inputInvest" type="number" inputmode="decimal" class="w-full bg-white px-3 py-2 rounded-xl text-[14px] font-bold text-ink outline-none" placeholder="0" />
+            </div>
+            <div class="bg-orangeSoft p-3 rounded-2xl">
+              <label class="block text-[12px] text-ink/70 mb-1 font-medium">存款</label>
+              <input id="inputDeposit" type="number" inputmode="decimal" class="w-full bg-white px-3 py-2 rounded-xl text-[14px] font-bold text-ink outline-none" placeholder="0" />
+            </div>
+            <div class="bg-orangeSoft p-3 rounded-2xl">
+              <label class="block text-[12px] text-ink/70 mb-1 font-medium">其他</label>
+              <input id="inputOther" type="number" inputmode="decimal" class="w-full bg-white px-3 py-2 rounded-xl text-[14px] font-bold text-ink outline-none" placeholder="0" />
+            </div>
           </div>
           
-          <button type="button" onclick="saveAsset()" class="w-full py-4 mt-4 bg-ink/90 text-white rounded-[20px] text-[16px] font-bold hover:bg-ink active:scale-95 transition-all">更新紀錄</button>
+          <button type="button" onclick="saveAsset()" class="w-full py-4 mt-2 bg-ink/90 text-white rounded-[20px] text-[16px] font-bold hover:bg-ink active:scale-95 transition-all">更新紀錄</button>
         </form>
-
+ 
         <div class="mb-2 mt-10">
           <div class="flex justify-between items-center mb-4 px-1">
             <h4 class="text-[16px] font-bold text-ink">上次儲存紀錄</h4>
@@ -703,7 +706,7 @@
       document.getElementById('assetOther').textContent = `$${currentAssets.other.toLocaleString()}`;
     }
 
-    // 渲染帶有 ✕ 刪除按鈕的歷史清單
+// 渲染歷史紀錄卡片（會在下方自動加總顯示總額）
     function renderAssetHistoryList(historyArray) {
       const listEl = document.getElementById("assetHistoryList");
       listEl.innerHTML = "";
@@ -736,11 +739,14 @@
         const dep = Number(record.deposit) || 0;
         const oth = Number(record.other) || 0;
 
+        // 在這裡自動將該筆的三個項目加總，顯示在右上角總額
+        const rowTotal = inv + dep + oth;
+
         card.innerHTML = `
           <div class="flex justify-between items-center border-b border-lavenderBorder pb-2 mb-3">
             <p class="text-[12px] text-ink/50 font-medium">${record.date || '未知時間'}</p>
             <div class="flex items-center gap-3">
-              <p class="text-[13px] font-bold text-ink">總額 $${Number(record.total).toLocaleString()}</p>
+              <p class="text-[13px] font-bold text-ink">總額 $${rowTotal.toLocaleString()}</p>
               <button onclick="deleteAssetRecord('${record.id}')" class="text-ink/30 hover:text-rose font-bold text-[14px] transition-colors" title="刪除此筆紀錄">✕</button>
             </div>
           </div>
@@ -767,32 +773,6 @@
       });
     }
 
-    // 刪除資產紀錄的動作
-    window.deleteAssetRecord = async (id) => {
-      if (!id || id === 'undefined') {
-        alert("找不到這筆紀錄的 ID，無法刪除喔！");
-        return;
-      }
-      if (!confirm("確定要刪除這筆資產紀錄嗎？")) return;
-
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'ASSET_DELETE', id: id })
-        });
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-          alert('紀錄已經刪除囉 ✨');
-          fetchAssetData(); 
-        } else {
-          alert('刪除失敗，我們再試一次！');
-        }
-      } catch (error) {
-        alert('連線有點問題，晚點再試試看！');
-      }
-    };
-
     async function fetchAssetData() {
       try {
         const response = await fetch(SCRIPT_URL + "?type=asset");
@@ -807,6 +787,11 @@
           };
           updateAssetUI(Number(result.data.diff) || 0);
 
+          // 自動把現有金額帶入三個輸入框
+          document.getElementById('inputInvest').value = currentAssets.invest;
+          document.getElementById('inputDeposit').value = currentAssets.deposit;
+          document.getElementById('inputOther').value = currentAssets.other;
+
           assetHistoryData = result.data.history || []; 
           renderAssetHistoryList(assetHistoryData);
         }
@@ -816,33 +801,25 @@
     }
 
     async function saveAsset() {
-      const amountInput = document.getElementById('assetAmountInput').value;
-      if (!amountInput) {
-        alert('記得要輸入金額喔！');
-        return;
-      }
+      const inv = Number(document.getElementById('inputInvest').value) || 0;
+      const dep = Number(document.getElementById('inputDeposit').value) || 0;
+      const oth = Number(document.getElementById('inputOther').value) || 0;
+
+      const newTotal = inv + dep + oth;
+      const diff = newTotal - currentAssets.total;
 
       const btn = document.querySelector('#assetForm button');
       const originalText = btn.textContent;
       btn.textContent = "更新中...";
       btn.disabled = true;
 
-      const newAmount = parseInt(amountInput, 10);
-      const type = document.querySelector('input[name="assetType"]:checked').value;
-
-      const newAssets = { ...currentAssets };
-      newAssets[type] = newAmount;
-      newAssets.total = newAssets.invest + newAssets.deposit + newAssets.other;
-
-      const diff = newAssets.total - currentAssets.total;
-
       const payload = {
         action: 'ASSET_UPDATE',
         id: Date.now().toString(),
-        total: newAssets.total,
-        invest: newAssets.invest,
-        deposit: newAssets.deposit,
-        other: newAssets.other,
+        total: newTotal,
+        invest: inv,
+        deposit: dep,
+        other: oth,
         diff: diff
       };
 
@@ -854,9 +831,8 @@
         const result = await response.json();
         
         if (result.status === 'success') {
-          currentAssets = newAssets;
+          currentAssets = { invest: inv, deposit: dep, other: oth, total: newTotal };
           updateAssetUI(diff);
-          document.getElementById('assetAmountInput').value = ''; 
           alert('資產更新成功囉 ✨');
           fetchAssetData(); 
         }
