@@ -6,10 +6,10 @@
   <title>bowbow記帳本</title>
 
   <link rel="icon" href="https://raw.githubusercontent.com/d930yao-create/savemoneyb/refs/heads/main/icon.png">
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/d930yao-create/savemoneyb/refs/heads/main/icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="bowbow記帳">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/d930yao-create/savemoneyb/refs/heads/main/icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="bowbow記帳">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,7 +88,6 @@
     }
     #floatingCalc:active { transform: scale(0.9); }
 
-    /* 計算機3D 糖果按鈕核心設定 */
     .btn-3d {
       position: relative;
       border-radius: 20px; 
@@ -101,55 +100,28 @@
       justify-content: center;
       height: 56px; 
     }
-    .btn-3d:active {
-      transform: translateY(4px); 
-    }
+    .btn-3d:active { transform: translateY(4px); }
 
     .btn-num {
       background: linear-gradient(180deg, #FFFFFF 0%, #FFF5F7 100%);
       color: #4E342E;
-      box-shadow: 
-        inset 0 3px 0 rgba(255,255,255,1), 
-        inset 0 -5px 0 rgba(240, 234, 245, 1),
-        0 5px 8px rgba(78, 52, 46, 0.08);
+      box-shadow: inset 0 3px 0 rgba(255,255,255,1), inset 0 -5px 0 rgba(240, 234, 245, 1), 0 5px 8px rgba(78, 52, 46, 0.08);
     }
-    .btn-num:active { box-shadow: inset 0 2px 0 rgba(255,255,255,1), inset 0 -2px 0 rgba(240, 234, 245, 1), 0 2px 4px rgba(78, 52, 46, 0.08); }
-
-    /* 功能鍵 C, %, 退格 (檸檬卡士達黃) */
     .btn-ctrl {
       background: linear-gradient(180deg, #FFFDE7 0%, #FFF59D 100%);
       color: #F57F17;
-      box-shadow: 
-        inset 0 3px 0 rgba(255, 255, 255, 0.9), 
-        inset 0 -5px 0 rgba(255, 241, 118, 1),
-        0 5px 8px rgba(255, 235, 59, 0.2);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.9), inset 0 -5px 0 rgba(255, 241, 118, 1), 0 5px 8px rgba(255, 235, 59, 0.2);
     }
-    .btn-ctrl:active { 
-      box-shadow: 
-        inset 0 2px 0 rgba(255, 255, 255, 0.9), 
-        inset 0 -2px 0 rgba(255, 241, 118, 1), 
-        0 2px 4px rgba(255, 235, 59, 0.2); 
-    }
-
     .btn-op {
       background: linear-gradient(180deg, #FFECEC 0%, #FFD2D2 100%);
       color: #D32F2F;
-      box-shadow: 
-        inset 0 3px 0 rgba(255,255,255,0.8), 
-        inset 0 -5px 0 rgba(239, 154, 154, 1),
-        0 5px 8px rgba(239, 154, 154, 0.3);
+      box-shadow: inset 0 3px 0 rgba(255,255,255,0.8), inset 0 -5px 0 rgba(239, 154, 154, 1), 0 5px 8px rgba(239, 154, 154, 0.3);
     }
-    .btn-op:active { box-shadow: inset 0 2px 0 rgba(255,255,255,0.8), inset 0 -2px 0 rgba(239, 154, 154, 1), 0 2px 4px rgba(239, 154, 154, 0.3); }
-
     .btn-eq {
       background: linear-gradient(180deg, #F48FB1 0%, #E91E63 100%);
       color: #FFFFFF;
-      box-shadow: 
-        inset 0 3px 0 rgba(255,255,255,0.4), 
-        inset 0 -5px 0 rgba(194, 24, 91, 1),
-        0 5px 12px rgba(233, 30, 99, 0.3);
+      box-shadow: inset 0 3px 0 rgba(255,255,255,0.4), inset 0 -5px 0 rgba(194, 24, 91, 1), 0 5px 12px rgba(233, 30, 99, 0.3);
     }
-    .btn-eq:active { box-shadow: inset 0 2px 0 rgba(255,255,255,0.4), inset 0 -2px 0 rgba(194, 24, 91, 1), 0 2px 4px rgba(233, 30, 99, 0.3); }
   </style>
 </head>
 
@@ -159,6 +131,7 @@
 
   <div class="max-w-xl mx-auto px-4 py-6 h-full flex flex-col">
     
+    <!-- 新增紀錄頁面 -->
     <div id="pageAdd" class="page-content active">
       <h3 class="text-[20px] font-bold text-ink mb-6 px-2 flex-shrink-0">🍓 新增記錄</h3>
       
@@ -187,6 +160,7 @@
       </div>
     </div>
 
+    <!-- 本月總覽頁面 -->
     <div id="pageOverview" class="page-content">
       <section class="card-solid rounded-[32px] p-5 flex-shrink-0 shadow-soft mb-4">
         <div class="flex justify-between items-center mb-4">
@@ -223,6 +197,7 @@
       </section>
     </div>
 
+    <!-- 明細清單頁面 -->
     <div id="pageList" class="page-content">
       <section class="card-solid rounded-[32px] p-5 flex-grow flex flex-col overflow-hidden shadow-soft mb-20">
         <div class="flex justify-between items-center mb-4 px-1">
@@ -238,7 +213,8 @@
       </section>
     </div>
 
-<div id="pageNotes" class="page-content">
+    <!-- 待繳清單頁面 -->
+    <div id="pageNotes" class="page-content">
       <div class="flex justify-between items-center mb-6 px-2">
           <h3 class="text-[20px] font-bold text-ink">📒 待繳清單</h3>
           <div class="bg-macaronRose px-4 py-2 rounded-2xl flex flex-col items-end">
@@ -255,20 +231,20 @@
       </div>
     </div>
 
+    <!-- 資產管理頁面 -->
     <div id="pageAsset" class="page-content">
       <div class="flex justify-between items-center mb-6 px-2">
           <h3 class="text-[20px] font-bold text-ink">🏦 資產管理</h3>
       </div>
 
       <div class="card-solid rounded-[32px] p-6 shadow-soft flex-grow flex flex-col mb-20 overflow-y-auto hide-scrollbar">
+        
         <div class="text-center mb-6">
           <p class="text-[14px] text-ink/60 font-medium mb-1">目前總資產</p>
           <p id="totalAssetDisplay" class="text-[32px] font-bold text-rose mb-2">$0</p>
-          <div class="inline-block px-4 py-1.5 bg-orangeSoft rounded-full">
-            <span class="text-[14px] font-medium text-ink/80" id="assetDiffDisplay">與上次相比：$0</span>
-          </div>
         </div>
 
+        <!-- 三欄設計 -->
         <div class="grid grid-cols-3 gap-3 mb-8">
           <div class="bg-macaronTeal rounded-2xl p-4 text-center">
             <p class="text-[14px] text-ink/80 mb-1">投資</p>
@@ -288,7 +264,6 @@
           <h4 class="text-[16px] font-bold text-ink mb-2">更新資產狀態</h4>
           <input id="assetAmountInput" type="number" inputmode="decimal" pattern="[0-9]*" class="w-full bg-orangeSoft px-5 py-4 rounded-[20px] border-none text-[18px] font-bold text-rose outline-none focus:bg-lavenderBorder" placeholder="輸入目前總金額" />
 
-          
           <div class="grid grid-cols-3 gap-2">
             <label class="flex items-center justify-center p-3 bg-orangeSoft rounded-xl font-medium text-[14px] text-ink/70 has-[:checked]:bg-macaronTeal has-[:checked]:text-ink has-[:checked]:font-bold transition-all">
               <input type="radio" name="assetType" value="invest" class="hidden" checked> 投資
@@ -304,18 +279,11 @@
           <button type="button" onclick="saveAsset()" class="w-full py-4 mt-4 bg-ink/90 text-white rounded-[20px] text-[16px] font-bold hover:bg-ink active:scale-95 transition-all">更新紀錄</button>
         </form>
 
-<div class="bg-orangeSoft/50 rounded-2xl p-4 mb-6 border border-lavenderBorder">
-          <h4 class="text-[14px] font-bold text-ink/80 mb-4 text-center">資產成長軌跡</h4>
-          <div class="h-[180px] w-full flex items-center justify-center">
-            <canvas id="assetTrendChart"></canvas>
+        <div class="mb-2 mt-10">
+          <div class="flex justify-between items-center mb-4 px-1">
+            <h4 class="text-[16px] font-bold text-ink">上次儲存紀錄</h4>
           </div>
-        </div>
-
-        <div class="mb-8">
-          <div class="flex justify-between items-center mb-3 px-1">
-            <h4 class="text-[14px] font-bold text-ink/80">歷史紀錄</h4>
-          </div>
-          <div id="assetHistoryList" class="space-y-3 max-h-[200px] overflow-y-auto hide-scrollbar">
+          <div id="assetHistoryList" class="space-y-4 max-h-[250px] overflow-y-auto hide-scrollbar">
             <p class="text-[14px] text-ink/40 text-center py-4 font-medium">載入中或是目前還沒有紀錄唷</p>
           </div>
         </div>
@@ -325,7 +293,7 @@
     
   </div> 
 
-
+  <!-- 計算機彈窗 -->
   <div id="calcModal" class="fixed inset-0 bg-ink/20 z-[60] hidden flex-col justify-center items-center backdrop-blur-sm px-4" onclick="if(event.target==this) closeCalc()">
     <div class="bg-cardBg w-full max-w-[320px] rounded-[32px] p-5 shadow-2xl pop-in border border-lavenderBorder" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center mb-3">
@@ -370,14 +338,13 @@
     </div>
   </div>
 
-
-
+  <!-- 下方導覽列 -->
   <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl bg-cardBg border-t border-lavenderBorder rounded-t-[32px] pb-6 pt-3 px-8 flex justify-between z-40 shadow-soft">
     <button onclick="switchTab('Add')" id="navAdd" class="flex flex-col items-center p-3 rounded-2xl transition-all nav-active"><span class="text-2xl drop-shadow-sm">✏️</span></button>
     <button onclick="switchTab('Overview')" id="navOverview" class="flex flex-col items-center p-3 rounded-2xl transition-all"><span class="text-2xl drop-shadow-sm">💫</span></button>
     <button onclick="switchTab('List')" id="navList" class="flex flex-col items-center p-3 rounded-2xl transition-all"><span class="text-2xl drop-shadow-sm">📋</span></button>
     <button onclick="switchTab('Notes')" id="navNotes" class="flex flex-col items-center p-3 rounded-2xl transition-all"><span class="text-2xl drop-shadow-sm">📒</span></button>
-<button onclick="switchTab('Asset')" id="navAsset" class="flex flex-col items-center p-3 rounded-2xl transition-all"><span class="text-2xl drop-shadow-sm">🏦</span></button>
+    <button onclick="switchTab('Asset')" id="navAsset" class="flex flex-col items-center p-3 rounded-2xl transition-all"><span class="text-2xl drop-shadow-sm">🏦</span></button>
   </nav>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -416,8 +383,7 @@
     function openCalc() { document.getElementById('calcModal').classList.replace('hidden','flex'); }
     function closeCalc() { document.getElementById('calcModal').classList.replace('flex','hidden'); }
 
-function switchTab(tabName) {
-      const tabs = ['Add', 'Overview', 'List', 'Notes', 'Asset'];  
+    function switchTab(tabName) {
       document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
       document.getElementById('page' + tabName).classList.add('active');
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
@@ -429,7 +395,6 @@ function switchTab(tabName) {
       }
     }
 
-    // 連動兩個月份選擇器
     function syncMonth(val) {
         document.querySelectorAll(".month-filter").forEach(el => el.value = val);
         render();
@@ -469,7 +434,6 @@ function switchTab(tabName) {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
           render();
           
-          // 如果停留在總覽頁，順便更新圓餅圖
           if(document.getElementById('pageOverview').classList.contains('active')) {
               const currentMonth = document.querySelector(".month-filter").value;
               renderPieChart(entries.filter(e => e.date && e.date.startsWith(currentMonth)));
@@ -609,17 +573,13 @@ function switchTab(tabName) {
       const entry = { id: Date.now().toString(), type: selectedType, amount: amt, date: document.getElementById("dateInput").value, note: document.getElementById("noteInput").value, mainCategory: selectedMainCategory, subCategory: selectedSubCategory || '' };
       entries.unshift(entry); localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
       
-      // 記帳後自動跳轉到「明細清單」
       render(); 
       switchTab('List'); 
       
       document.getElementById("amountInput").value = ""; document.getElementById("noteInput").value = "";
       try { 
         await fetch(SCRIPT_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(entry) }); 
-        // 稍微延遲 1 秒再重新載入雲端，讓資料庫完整寫入，完美搭配 ID 字串防重機制
-        setTimeout(async () => {
-          await loadDataFromSheet();
-        }, 1000);
+        setTimeout(async () => { await loadDataFromSheet(); }, 1000);
       } catch(err) {}
     };
 
@@ -732,200 +692,185 @@ function switchTab(tabName) {
     document.getElementById("btnExpense").onclick = () => setupForm('expense');
     document.getElementById("btnSaving").onclick = () => setupForm('saving');
 
-    init();
-    setupForm('expense');
-fetchAssetData();
+    // === 資產管理專區 ===
+    let currentAssets = { invest: 0, deposit: 0, other: 0, total: 0 };
+    let assetHistoryData = []; 
 
-let currentAssets = { invest: 0, deposit: 0, other: 0, total: 0 };
+    function updateAssetUI(diffAmount = 0) {
+      document.getElementById('totalAssetDisplay').textContent = `$${currentAssets.total.toLocaleString()}`;
+      document.getElementById('assetInvest').textContent = `$${currentAssets.invest.toLocaleString()}`;
+      document.getElementById('assetDeposit').textContent = `$${currentAssets.deposit.toLocaleString()}`;
+      document.getElementById('assetOther').textContent = `$${currentAssets.other.toLocaleString()}`;
+    }
 
-let assetChartInstance = null;
-let assetHistoryData = []; // 用來存放後端傳來的歷史陣列
+    // 渲染帶有 ✕ 刪除按鈕的歷史清單
+    function renderAssetHistoryList(historyArray) {
+      const listEl = document.getElementById("assetHistoryList");
+      listEl.innerHTML = "";
 
-// 繪製溫柔質感的折線圖
-function renderAssetChart(historyArray) {
-  const ctx = document.getElementById("assetTrendChart");
-  if (!ctx) return;
+      if (!historyArray || historyArray.length === 0) {
+        listEl.innerHTML = '<p class="text-[14px] text-ink/40 text-center py-4 font-medium">目前還沒有紀錄唷 ✨</p>';
+        return;
+      }
 
-  // 準備圖表資料 (取最近 6 筆，並反轉讓時間由左至右)
-  const chartData = [...historyArray].slice(0, 6).reverse();
-  const labels = chartData.map(item => item.date || '未知');
-  const totals = chartData.map(item => item.total || 0);
+      historyArray.forEach(record => {
+        const card = document.createElement("div");
+        card.className = "bg-white border border-lavenderBorder rounded-2xl p-4 shadow-sm";
+        
+        const diffVal = Number(record.diff) || 0;
+        let diffText = `$0`;
+        let diffColor = "text-ink/50";
+        let diffBg = "bg-orangeSoft";
+        
+        if (diffVal > 0) {
+          diffText = `+$${diffVal.toLocaleString()}`;
+          diffColor = "text-ink font-bold";
+          diffBg = "bg-macaronTeal";
+        } else if (diffVal < 0) {
+          diffText = `-$${Math.abs(diffVal).toLocaleString()}`;
+          diffColor = "text-rose font-bold"; 
+          diffBg = "bg-macaronRose";
+        }
 
-  if(assetChartInstance) assetChartInstance.destroy();
+        const inv = Number(record.invest) || 0;
+        const dep = Number(record.deposit) || 0;
+        const oth = Number(record.other) || 0;
 
-  assetChartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: '總資產',
-        data: totals,
-        borderColor: '#F48FB1', // 玫瑰粉線條
-        backgroundColor: 'rgba(244, 143, 177, 0.1)', 
-        borderWidth: 3,
-        tension: 0.4, // 圓滑的曲線
-        fill: true,
-        pointBackgroundColor: '#FFFFFF',
-        pointBorderColor: '#F48FB1',
-        pointRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { family: "'Zen Maru Gothic', sans-serif", size: 10 }, color: '#4E342E' } },
-        y: { grid: { color: '#F0EAF5' }, ticks: { font: { family: "'Zen Maru Gothic', sans-serif", size: 10 }, color: '#4E342E' } }
+        card.innerHTML = `
+          <div class="flex justify-between items-center border-b border-lavenderBorder pb-2 mb-3">
+            <p class="text-[12px] text-ink/50 font-medium">${record.date || '未知時間'}</p>
+            <div class="flex items-center gap-3">
+              <p class="text-[13px] font-bold text-ink">總額 $${Number(record.total).toLocaleString()}</p>
+              <button onclick="deleteAssetRecord('${record.id}')" class="text-ink/30 hover:text-rose font-bold text-[14px] transition-colors" title="刪除此筆紀錄">✕</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-center items-center">
+            <div>
+              <p class="text-[11px] text-ink/60 mb-1">投資</p>
+              <p class="text-[13px] font-bold text-ink truncate">$${inv.toLocaleString()}</p>
+            </div>
+            <div>
+              <p class="text-[11px] text-ink/60 mb-1">存款</p>
+              <p class="text-[13px] font-bold text-ink truncate">$${dep.toLocaleString()}</p>
+            </div>
+            <div>
+              <p class="text-[11px] text-ink/60 mb-1">其他</p>
+              <p class="text-[13px] font-bold text-ink truncate">$${oth.toLocaleString()}</p>
+            </div>
+            <div class="${diffBg} rounded-xl py-1.5 flex flex-col justify-center">
+              <p class="text-[11px] text-ink/60 mb-0.5">變動</p>
+              <p class="text-[13px] ${diffColor} truncate">${diffText}</p>
+            </div>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    // 刪除資產紀錄的動作
+    window.deleteAssetRecord = async (id) => {
+      if (!id || id === 'undefined') {
+        alert("找不到這筆紀錄的 ID，無法刪除喔！");
+        return;
+      }
+      if (!confirm("確定要刪除這筆資產紀錄嗎？")) return;
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'ASSET_DELETE', id: id })
+        });
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          alert('紀錄已經刪除囉 ✨');
+          fetchAssetData(); 
+        } else {
+          alert('刪除失敗，我們再試一次！');
+        }
+      } catch (error) {
+        alert('連線有點問題，晚點再試試看！');
+      }
+    };
+
+    async function fetchAssetData() {
+      try {
+        const response = await fetch(SCRIPT_URL + "?type=asset");
+        const result = await response.json();
+        
+        if (result.status === 'success' && result.data) {
+          currentAssets = {
+            invest: Number(result.data.invest) || 0,
+            deposit: Number(result.data.deposit) || 0,
+            other: Number(result.data.other) || 0,
+            total: Number(result.data.total) || 0
+          };
+          updateAssetUI(Number(result.data.diff) || 0);
+
+          assetHistoryData = result.data.history || []; 
+          renderAssetHistoryList(assetHistoryData);
+        }
+      } catch (error) {
+        console.error("資產資料讀取失敗:", error);
       }
     }
-  });
-}
 
-// 渲染清單
-function renderAssetHistoryList(historyArray) {
-  const listEl = document.getElementById("assetHistoryList");
-  listEl.innerHTML = "";
+    async function saveAsset() {
+      const amountInput = document.getElementById('assetAmountInput').value;
+      if (!amountInput) {
+        alert('記得要輸入金額喔！');
+        return;
+      }
 
-  if (!historyArray || historyArray.length === 0) {
-    listEl.innerHTML = '<p class="text-[14px] text-ink/40 text-center py-4 font-medium">目前還沒有紀錄唷 ✨</p>';
-    return;
-  }
+      const btn = document.querySelector('#assetForm button');
+      const originalText = btn.textContent;
+      btn.textContent = "更新中...";
+      btn.disabled = true;
 
-  historyArray.forEach(record => {
-    const card = document.createElement("div");
-    card.className = "bg-white border border-lavenderBorder rounded-2xl p-3 shadow-sm flex justify-between items-center";
-    
-    // 判斷增減顏色
-    const diffVal = Number(record.diff) || 0;
-    let diffText = `$0`;
-    let diffColor = "text-ink/40";
-    if (diffVal > 0) {
-      diffText = `+$${diffVal.toLocaleString()}`;
-      diffColor = "text-macaronTeal font-bold text-ink"; // 增加用湖水綠字
-    } else if (diffVal < 0) {
-      diffText = `-$${Math.abs(diffVal).toLocaleString()}`;
-      diffColor = "text-rose font-bold"; // 減少用玫瑰粉字
-    }
+      const newAmount = parseInt(amountInput, 10);
+      const type = document.querySelector('input[name="assetType"]:checked').value;
 
-    card.innerHTML = `
-      <div>
-        <p class="text-[12px] text-ink/50 font-medium mb-1">${record.date || '未知時間'}</p>
-        <p class="text-[16px] font-bold text-ink">$${Number(record.total).toLocaleString()}</p>
-      </div>
-      <div class="text-right bg-orangeSoft px-3 py-1.5 rounded-xl">
-        <p class="text-[14px] ${diffColor}">${diffText}</p>
-      </div>
-    `;
-    listEl.appendChild(card);
-  });
-}
+      const newAssets = { ...currentAssets };
+      newAssets[type] = newAmount;
+      newAssets.total = newAssets.invest + newAssets.deposit + newAssets.other;
 
- 
-async function fetchAssetData() {
-  try {
-    const response = await fetch(SCRIPT_URL + "?type=asset");
-    const result = await response.json();
-    
-    if (result.status === 'success' && result.data) {
-      currentAssets = {
-        invest: Number(result.data.invest) || 0,
-        deposit: Number(result.data.deposit) || 0,
-        other: Number(result.data.other) || 0,
-        total: Number(result.data.total) || 0
+      const diff = newAssets.total - currentAssets.total;
+
+      const payload = {
+        action: 'ASSET_UPDATE',
+        id: Date.now().toString(),
+        total: newAssets.total,
+        invest: newAssets.invest,
+        deposit: newAssets.deposit,
+        other: newAssets.other,
+        diff: diff
       };
-      updateAssetUI(Number(result.data.diff) || 0);
 
-      // --- 新增這兩行 ---
-      assetHistoryData = result.data.history || []; // 假設後端會傳 history 陣列回來
-      renderAssetChart(assetHistoryData);
-      renderAssetHistoryList(assetHistoryData);
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          currentAssets = newAssets;
+          updateAssetUI(diff);
+          document.getElementById('assetAmountInput').value = ''; 
+          alert('資產更新成功囉 ✨');
+          fetchAssetData(); 
+        }
+      } catch (error) {
+        alert('更新失敗，我們再試一次！');
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
     }
-  } catch (error) {
-    console.error("資產資料讀取失敗:", error);
-  }
-}
 
-// 2. 更新畫面顯示與顏色
-function updateAssetUI(diffAmount = 0) {
-  document.getElementById('totalAssetDisplay').textContent = `$${currentAssets.total.toLocaleString()}`;
-  document.getElementById('assetInvest').textContent = `$${currentAssets.invest.toLocaleString()}`;
-  document.getElementById('assetDeposit').textContent = `$${currentAssets.deposit.toLocaleString()}`;
-  document.getElementById('assetOther').textContent = `$${currentAssets.other.toLocaleString()}`;
-
-  const diffEl = document.getElementById('assetDiffDisplay');
-  const parent = diffEl.parentElement;
-  
-  // 清除舊顏色，根據增減換上新衣服
-  parent.classList.remove('bg-macaronRose', 'bg-macaronTeal', 'bg-orangeSoft');
-  
-  if (diffAmount > 0) {
-    diffEl.textContent = `與上次相比：+$${diffAmount.toLocaleString()}`;
-    parent.classList.add('bg-macaronRose'); // 賺錢顯示溫柔的湖水綠
-  } else if (diffAmount < 0) {
-    diffEl.textContent = `與上次相比：-$${Math.abs(diffAmount).toLocaleString()}`;
-    parent.classList.add('bg-macaronTeal'); // 減少顯示玫瑰粉
-  } else {
-    diffEl.textContent = `與上次相比：$0`;
-    parent.classList.add('bg-orangeSoft');  // 持平維持原本的暖橘色
-  }
-}
-
-
-async function saveAsset() {
-  const amountInput = document.getElementById('assetAmountInput').value;
-  if (!amountInput) {
-    alert('記得要輸入金額喔！');
-    return;
-  }
-
-
-  const btn = document.querySelector('#assetForm button');
-  const originalText = btn.textContent;
-  btn.textContent = "更新中...";
-  btn.disabled = true;
-
-  const newAmount = parseInt(amountInput, 10);
-  const type = document.querySelector('input[name="assetType"]:checked').value;
-
-
-  const newAssets = { ...currentAssets };
-  newAssets[type] = newAmount;
-  newAssets.total = newAssets.invest + newAssets.deposit + newAssets.other;
-
-
-  const diff = newAssets.total - currentAssets.total;
-
-  const payload = {
-    action: 'ASSET_UPDATE',
-    id: Date.now().toString(),
-    total: newAssets.total,
-    invest: newAssets.invest,
-    deposit: newAssets.deposit,
-    other: newAssets.other,
-    diff: diff
-  };
-
-  try {
-    const response = await fetch(SCRIPT_URL, {
-  method: 'POST',
-  body: JSON.stringify(payload)
-});
-    const result = await response.json();
-    
-    if (result.status === 'success') {
-      currentAssets = newAssets;
-      updateAssetUI(diff);
-      document.getElementById('assetAmountInput').value = ''; 
-      alert('資產更新成功囉 ✨');
-    }
-  } catch (error) {
-    alert('更新失敗，我們再試一次！');
-  } finally {
-    btn.textContent = originalText;
-    btn.disabled = false;
-  }
-}
+    init();
+    setupForm('expense');
+    fetchAssetData();
   </script>
 </body>
 </html>
